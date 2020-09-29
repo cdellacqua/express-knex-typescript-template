@@ -1,7 +1,6 @@
 import { Router } from 'express';
-import helloRoutes from './hello';
 
 const r: Router = Router();
 export default r;
 
-r.use('/', helloRoutes);
+r.get('/', (_, res) => res.render('hello-world'));
