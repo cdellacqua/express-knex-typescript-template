@@ -38,7 +38,7 @@ These scripts are:
 ## docker
 
 This template includes a docker-compose.yml that is used to startup a PostgreSQL container. The following commands can be used to manage the container:
-- `docker-compose up -d`: starts the PostgreSQL container in detach mode, so it won't block your shell
+- `docker-compose up -d`: starts the PostgreSQL container in detached mode, so it won't block your shell
 - `docker-compose down`: stops and remove the container, by default **removing also all the data**. To enable data persistence you just have to uncomment some lines in docker-compose.yml as described in the file
 - `docker-compose exec postgres psql -U default -d default`: logs your shell into the PostgreSQL CLI client of the container
 
