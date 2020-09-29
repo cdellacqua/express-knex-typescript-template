@@ -1,6 +1,6 @@
 # express-knex-typescript-template
 
-This template can be used to quickly scaffold a project based on express, knex and typescript.
+A project template that can be used to quickly scaffold a project based on express, knex and typescript.
 It provides a JWT-based authorization mechanism out-of-the-box and a PostgreSQL docker container to easily setup a development database.
 
 ## Setup
