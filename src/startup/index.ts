@@ -1,0 +1,2 @@
+import './transact';
+import './tsyringe';
