@@ -65,14 +65,14 @@ export function findOneGenerator<TFilter = Record<string, any> | string | number
 	columns: string[],
 	rowToEntity: (row: any, trx?: Transaction) => Promise<TEntity>,
 ) {
-	return async (filter: TFilter, trx?: Transaction): Promise<TEntity | undefined> => {
+	return async (filter: TFilter, trx?: Transaction): Promise<TEntity | null> => {
 		const query = trx?.queryBuilder() || knex.queryBuilder();
 		const row = await query.table(table)
 			.where(
 				typeof filter === 'object' ? filter : { id: filter },
 			)
 			.first(columns);
-		return row ? rowToEntity(row, trx) : undefined;
+		return row ? rowToEntity(row, trx) : null;
 	};
 }
 
