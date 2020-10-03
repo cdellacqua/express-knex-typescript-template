@@ -1,7 +1,3 @@
-import dotenv from 'dotenv';
-
-dotenv.config();
-
 export default {
 	http: {
 		hostname: process.env.HOST || 'localhost',
