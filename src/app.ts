@@ -9,6 +9,11 @@ import { HttpError } from './http/error';
 
 const app = express();
 
+// TODO: if your application is behind a proxy, you can specify its IP address.
+// By default, it is assumed that the Node.js process runs behind a proxy on the same machine, so the loopback
+// interface is specified
+app.set('trust proxy', 'loopback');
+
 app.set('views', path.join(__dirname, '..', '/views'));
 app.set('view engine', 'pug');
 
