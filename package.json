@@ -41,9 +41,9 @@
 		"typescript": "^3.9.7"
 	},
 	"dependencies": {
-		"@cdellacqua/express-async-wrapper": "^1.0.1",
-		"@cdellacqua/knex-transact": "^1.0.2",
-		"@cdellacqua/serializable-error": "^1.0.0",
+		"@cdellacqua/express-async-wrapper": "^1.0.2",
+		"@cdellacqua/knex-transact": "^1.0.4",
+		"@cdellacqua/serializable-error": "^1.0.7",
 		"@types/jsonwebtoken": "^8.5.0",
 		"bcryptjs": "^2.4.3",
 		"body-parser": "^1.19.0",
