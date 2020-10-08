@@ -88,7 +88,7 @@ export interface LoginParams {
 }
 
 export interface User {
-	id: uuid;
+	id: string;
 	email: string;
 	passwordHash: string;
 	enabled: boolean;
