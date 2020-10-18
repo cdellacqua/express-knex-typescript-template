@@ -106,7 +106,7 @@ export function findMultiGenerator<TFilter = Record<string, any> | string | numb
 	columns: string[],
 	rowToEntity: (row: any, trx?: Transaction) => Promise<TEntity>,
 ) {
-	return async (filters: TFilter[], trx?: Transaction): Promise<TEntity[]> => {
+	return async (filters: TFilter[], orderBy?: {column: string; order: 'asc'|'desc'}[], trx?: Transaction): Promise<TEntity[]> => {
 		if (filters.length > 0) {
 			const query = trx?.queryBuilder() || knex.queryBuilder();
 			const rows: any[] = await filters.reduce<QueryBuilder>((_query, filter) => _query.unionAll(function findSingle() {
@@ -115,7 +115,7 @@ export function findMultiGenerator<TFilter = Record<string, any> | string | numb
 						typeof filter === 'object' ? filter : { id: filter },
 					)
 					.select(columns);
-			}, true), query);
+			}, true), query).orderBy(orderBy || []);
 
 			return Promise.all(rows.map((row: any) => rowToEntity(row, trx)));
 		}
