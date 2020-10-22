@@ -63,14 +63,14 @@ export class UserService {
 
 	create(user: SaveUser, trx?: Transaction): Promise<User> {
 		return transact([
-			(db) => insertGetId(db('user')
+			async (db) => insertGetId(db('user')
 				.insert({
-					email: user.email,
-					passwordHash: bcrypt.hashSync(user.password, 10),
+					email: user.email.toLowerCase(),
+					passwordHash: await bcrypt.hash(user.password, 10),
 					enabled: user.enabled,
 					minJwtIat: new Date(),
 				})),
-			(db, id) => this.find(id, db)!,
+			(db, id) => this.find(id, db),
 		], trx);
 	}
 
