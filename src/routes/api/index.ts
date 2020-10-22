@@ -5,6 +5,7 @@ import authenticatedRoutes from './authenticated';
 const r: Router = Router();
 export default r;
 
+// TODO: remove this example
 r.get('/', (_, res) => res.send('hello, World!'));
 
 r.use('/user', userRoutes);
