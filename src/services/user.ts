@@ -9,6 +9,8 @@ import {
 import { uuid } from '../types/common';
 
 export class UserService {
+	table = 'user';
+
 	columns = [
 		'id',
 		'email',
@@ -57,13 +59,13 @@ export class UserService {
 		});
 	}
 
-	find = findOneGenerator('user', this.columns, (row) => this.rowMapper(row));
+	find = findOneGenerator(this.table, this.columns, (row) => this.rowMapper(row));
 
 	fromQuery = fromQueryGenerator<User>(this.columns, (row) => this.rowMapper(row));
 
 	create(user: SaveUser, trx?: Transaction): Promise<User> {
 		return transact([
-			async (db) => insertGetId(db('user')
+			async (db) => insertGetId(db(this.table)
 				.insert({
 					email: user.email.toLowerCase(),
 					passwordHash: await bcrypt.hash(user.password, 10),
@@ -76,7 +78,7 @@ export class UserService {
 
 	update(id: string, user: Partial<SaveUser>, trx?: Transaction): Promise<User> {
 		return transact([
-			async (db) => db('user')
+			async (db) => db(this.table)
 				.where({ id })
 				.update({
 					email: user.email?.toLowerCase(),
@@ -90,7 +92,7 @@ export class UserService {
 
 	delete(id: uuid, trx?: Transaction): Promise<void> {
 		return transact(
-			(db) => db('user').where({ id }).delete(),
+			(db) => db(this.table).where({ id }).delete(),
 			trx,
 		);
 	}
