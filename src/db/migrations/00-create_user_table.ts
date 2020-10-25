@@ -2,7 +2,7 @@ import Knex from 'knex';
 
 export async function up(knex: Knex): Promise<void> {
 	await knex.schema.createTable('user', (table) => {
-		table.bigIncrements('id').primary();
+		table.uuid('id').primary().defaultTo(knex.raw('uuid_generate_v4()'));
 		table.string('email', 512).unique().notNullable();
 		table.string('passwordHash', 512).notNullable();
 		table.boolean('enabled').notNullable();
