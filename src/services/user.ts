@@ -68,9 +68,23 @@ export class UserService {
 					email: user.email.toLowerCase(),
 					passwordHash: await bcrypt.hash(user.password, 10),
 					enabled: user.enabled,
-					minJwtIat: new Date(),
+					minJwtIat: user.minJwtIat || new Date(),
 				})),
 			(db, id) => this.find(id, db),
+		], trx);
+	}
+
+	update(id: string, user: Partial<SaveUser>, trx?: Transaction): Promise<User> {
+		return transact([
+			async (db) => db('user')
+				.where({ id })
+				.update({
+					email: user.email?.toLowerCase(),
+					passwordHash: user.password && await bcrypt.hash(user.password, 10),
+					enabled: user.enabled,
+					minJwtIat: user.minJwtIat,
+				}),
+			(db) => this.find(id, db),
 		], trx);
 	}
 
@@ -100,6 +114,7 @@ export interface SaveUser {
 	email: string;
 	password: string;
 	enabled: boolean;
+	minJwtIat?: Date;
 }
 
 export interface AuthResponse {
