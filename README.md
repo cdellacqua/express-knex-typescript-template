@@ -31,6 +31,7 @@ These scripts are:
 - `lint`: runs eslint
 - `lint:fix`: runs eslint with the --fix flag
 - `migrate`: builds the project and run all the migrations under src/db/migrations
+- `rollback:all`: builds the project and rollbacks all the migrations under src/db/migrations
 - `seed`: builds the project and run all the seeds under src/db/seeds
 - `migrate-seed`: migrates and seeds, without building twice
 - `setup`: runs the setup.js script described below

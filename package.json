@@ -12,6 +12,7 @@
 		"lint": "eslint .",
 		"lint:fix": "eslint --fix .",
 		"migrate": "npm run build && knex migrate:latest",
+		"rollback:all": "npm run build && knex migrate:rollback --all",
 		"seed": "npm run build && knex seed:run",
 		"migrate-seed": "npm run build && knex migrate:latest && knex seed:run",
 		"setup": "node setup.js"
