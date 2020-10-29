@@ -21,7 +21,7 @@ export class UserService {
 	];
 
 	async login({ email, password }: LoginParams): Promise<AuthResponse | null> {
-		const user = await this.find({ email });
+		const user = await this.find({ email, enabled: true });
 		if (!user) {
 			return null;
 		}
