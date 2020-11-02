@@ -49,4 +49,8 @@ app.use((err: Error, req: express.Request, res: express.Response, _: express.Nex
 	res.end();
 });
 
+app.use((_: express.Request, res: express.Response) => {
+	res.status(404).render('404');
+});
+
 export default app;
