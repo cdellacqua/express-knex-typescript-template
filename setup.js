@@ -22,5 +22,5 @@ const randomBytes = promisify(crypto.randomBytes);
 	const packageLockPath = path.join(__dirname, 'package-lock.json');
 	const packageLockContent = (await fs.promises.readFile(packageLockPath)).toString();
 	await fs.promises.writeFile(packageLockPath, packageLockContent.replace(/"name":[^\r\n]+/, `"name": "${path.basename(__dirname)}",`));
-	console.info('updated package name in package.json');
+	console.info('updated package name in package-lock.json');
 })();
