@@ -9,7 +9,7 @@ import { UserService } from '../../../services/user';
 // TODO: customize your authorization logic
 const middleware = asyncWrapper(async (req, res, next) => {
 	if (!req.headers.authorization) {
-		throw new HttpError(401, 'unauthorized', undefined, false);
+		throw new HttpError(401, 'unauthorized', undefined);
 	}
 	let decoded;
 	try {
@@ -18,18 +18,18 @@ const middleware = asyncWrapper(async (req, res, next) => {
 		throw new HttpError(401, 'unauthorized', err);
 	}
 	if (!decoded) {
-		throw new HttpError(401, 'unauthorized', new SerializableError('jwt decode returned falsy value'), false);
+		throw new HttpError(401, 'unauthorized', new SerializableError('jwt decode returned falsy value'));
 	}
 	const userService = container.resolve(UserService);
 	const user = await userService.find(decoded.sub);
 	if (!user) {
-		throw new HttpError(401, 'unauthorized', new SerializableError('jwt refers to missing user'), false);
+		throw new HttpError(401, 'unauthorized', new SerializableError('jwt refers to missing user'));
 	}
 	if (!user.enabled) {
-		throw new HttpError(401, 'unauthorized', new SerializableError('jwt refers to disabled user'), false);
+		throw new HttpError(401, 'unauthorized', new SerializableError('jwt refers to disabled user'));
 	}
 	if (user.minJwtIat.getTime() > decoded.iat * 1000) {
-		throw new HttpError(401, 'unauthorized', new SerializableError('jwt iat is less than the min required for the specified user'), false);
+		throw new HttpError(401, 'unauthorized', new SerializableError('jwt iat is less than the min required for the specified user'));
 	}
 	res.locals.user = user;
 	next();

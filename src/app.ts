@@ -36,17 +36,22 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/', routes);
 
 app.use((err: Error, req: express.Request, res: express.Response, _: express.NextFunction) => {
-	const statusCode = err instanceof HttpError ? err.statusCode : 500;
-	if (!(err instanceof HttpError && !err.log)) {
+	if (err instanceof HttpError) {
+		logger.warn(err);
+		res.status(err.statusCode);
+		if (err.statusCode >= 400 && err.statusCode <= 500) {
+			if (err.content) {
+				res.json(err.content);
+			} else {
+				res.send(err.message);
+			}
+		} else {
+			res.end();
+		}
+	} else {
 		logger.error(err);
+		res.status(500).end();
 	}
-	res.status(statusCode);
-	if (process.env.NODE_ENV === 'development') {
-		res.json(err);
-	} else if (statusCode >= 400 && statusCode < 500) {
-		res.send(err.message);
-	}
-	res.end();
 });
 
 app.use((_: express.Request, res: express.Response) => {
