@@ -37,15 +37,16 @@ app.use('/', routes);
 
 app.use((err: Error, req: express.Request, res: express.Response, _: express.NextFunction) => {
 	if (err instanceof HttpError) {
-		logger.warn(err);
 		res.status(err.statusCode);
-		if (err.statusCode >= 400 && err.statusCode <= 500) {
+		if (err.statusCode >= 400 && err.statusCode < 500) {
+			logger.warn(err);
 			if (err.content) {
 				res.json(err.content);
 			} else {
 				res.send(err.message);
 			}
 		} else {
+			logger.error(err);
 			res.end();
 		}
 	} else {
