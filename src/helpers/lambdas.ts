@@ -15,3 +15,7 @@ export function range(from: number, to: number): number[] {
 }
 
 export const noop = (): void => undefined;
+
+export const sleep = (ms: number): Promise<void> => new Promise((res) => setTimeout(res, ms));
+
+export const waitImmediate = (): Promise<void> => new Promise((res) => setImmediate(res));

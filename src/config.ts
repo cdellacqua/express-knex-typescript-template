@@ -11,4 +11,7 @@ export default {
 	log: {
 		level: process.env.LOG_LEVEL || 'http',
 	},
+	shutdown: {
+		interval: Number(process.env.SHUTDOWN_INTERVAL_SECONDS || 10),
+	},
 };
