@@ -24,14 +24,16 @@ async function closeActiveSockets(shutdownTimestamp: number) {
 		const activeTimestamp = Math.round(Date.now() / 1000);
 		const remainingSeconds = config.shutdown.interval - (activeTimestamp - shutdownTimestamp);
 		if (remainingSeconds > 0) {
-			logger.warn(`Server stopped but ${activeSockets.length} sockets are still active, waiting ${remainingSeconds}s before forcing shutdown...`);
-			await sleep(remainingSeconds);
+			logger.warn(
+				`Server stopped but ${activeSockets.length} socket${
+					activeSockets.length === 1 ? ' is' : 's are'} still active, waiting ${remainingSeconds}s before forcing shutdown...`);
+			await sleep(remainingSeconds * 1000);
 		}
 
 		if (activeSockets.length === 0) {
 			logger.warn('No active sockets to forcibly shutdown');
 		} else {
-			logger.warn(`${activeSockets.length} sockets still active, forcing shutdown...`);
+			logger.warn(`${activeSockets.length} socket${activeSockets.length === 1 ? '' : 's'} still active, forcing shutdown...`);
 			activeSockets.forEach((socket) => {
 				socket.end(noop);
 			});
@@ -39,7 +41,7 @@ async function closeActiveSockets(shutdownTimestamp: number) {
 			activeSockets.forEach((socket) => {
 				socket.destroy();
 			});
-			logger.warn(`${activeSockets.length} sockets destroyed`);
+			logger.warn(`${activeSockets.length} socket${activeSockets.length === 1 ? '' : 's'} destroyed`);
 		}
 	}
 }
