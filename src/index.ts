@@ -26,7 +26,8 @@ async function closeActiveSockets(shutdownTimestamp: number) {
 		if (remainingSeconds > 0) {
 			logger.warn(
 				`Server stopped but ${activeSockets.length} socket${
-					activeSockets.length === 1 ? ' is' : 's are'} still active, waiting ${remainingSeconds}s before forcing shutdown...`);
+					activeSockets.length === 1 ? ' is' : 's are'} still active, waiting ${remainingSeconds}s before forcing shutdown...`,
+			);
 			await sleep(remainingSeconds * 1000);
 		}
 
