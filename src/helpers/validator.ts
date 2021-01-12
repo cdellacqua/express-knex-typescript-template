@@ -1,13 +1,12 @@
-import {
-	Request, Response, NextFunction, RequestHandler,
-} from 'express';
+import { RequestHandler } from 'express';
 import { validationResult } from 'express-validator';
+import { HttpError } from '../http/error';
 
 export function rejectOnFailedValidation(): RequestHandler {
-	return (req: Request, res: Response, next: NextFunction): void => {
+	return (req, _, next) => {
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
-			res.status(422).json({ errors: errors.array() });
+			next(new HttpError(422, errors.array()));
 		} else {
 			next();
 		}
