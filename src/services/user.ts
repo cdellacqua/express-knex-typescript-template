@@ -19,16 +19,12 @@ const columns = [
 	'createdAt',
 ];
 
-export async function login({ email, password }: LoginParams): Promise<AuthResponse | null> {
-	const user = await find({ email, enabled: true });
-	if (!user) {
-		return null;
-	}
-	const passwordMatches = await bcrypt.compare(password, user.passwordHash);
-	if (!passwordMatches) {
-		return null;
-	}
-	return generateAuthResponse(user);
+export function createJwt(user: User): string {
+	const token = jwt.sign({}, config.secret, {
+		expiresIn: config.authentication.tokenExpirationSeconds,
+		subject: user.id,
+	});
+	return token;
 }
 
 export function generateAuthResponse(user: User): AuthResponse {
@@ -42,14 +38,6 @@ export function generateAuthResponse(user: User): AuthResponse {
 			minJwtIat: user.minJwtIat,
 		},
 	};
-}
-
-export function createJwt(user: User): string {
-	const token = jwt.sign({}, config.secret, {
-		expiresIn: config.authentication.tokenExpirationSeconds,
-		subject: user.id,
-	});
-	return token;
 }
 
 function rowMapper(row: any): Promise<User> {
@@ -94,6 +82,18 @@ export function destroy(id: uuid, trx?: Transaction): Promise <void> {
 		(db) => db(table).where({ id }).delete(),
 		trx,
 	);
+}
+
+export async function login({ email, password }: LoginParams): Promise<AuthResponse | null> {
+	const user = await find({ email, enabled: true });
+	if (!user) {
+		return null;
+	}
+	const passwordMatches = await bcrypt.compare(password, user.passwordHash);
+	if (!passwordMatches) {
+		return null;
+	}
+	return generateAuthResponse(user);
 }
 
 export interface LoginParams {

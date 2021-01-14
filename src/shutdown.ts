@@ -1,5 +1,4 @@
 import './startup';
-import { Express } from 'express';
 import { Socket } from 'net';
 import { Server } from 'http';
 import config from './config';

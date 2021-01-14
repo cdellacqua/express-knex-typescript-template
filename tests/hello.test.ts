@@ -5,7 +5,6 @@ const serverUrl = `http://${process.env.HOST}:${process.env.PORT}`;
 
 chai.use(chaiHttp);
 
-
 before(() => {
 	console.log('before');
 });
