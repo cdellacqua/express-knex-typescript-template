@@ -5,10 +5,6 @@ const serverUrl = `http://${process.env.HOST}:${process.env.PORT}`;
 
 chai.use(chaiHttp);
 
-before(() => {
-	console.log('before');
-});
-
 describe('hello', () => {
 	it('gets ssr hello', (done) => {
 		chai.request(serverUrl)

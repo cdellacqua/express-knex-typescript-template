@@ -1,11 +1,12 @@
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import spies from 'chai-spies';
+import logger from '../src/log/logger';
 import * as userModule from '../src/services/user';
 
 before(() => {
 	chai.spy.on(userModule, 'destroy', () => {
-		console.log('[EXAMPLE] You can alter any module using chai.spy');
+		logger.info('[EXAMPLE] You can alter any module using chai.spy');
 		return Promise.resolve();
 	});
 });
