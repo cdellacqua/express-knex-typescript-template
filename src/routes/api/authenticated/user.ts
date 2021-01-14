@@ -1,7 +1,7 @@
 import { asyncWrapper } from '@cdellacqua/express-async-wrapper';
 import { Router } from 'express';
 import { body } from 'express-validator';
-import { destroy, generateAuthResponse, update } from '../../../services/user';
+import { del, generateAuthResponse, update } from '../../../services/user';
 
 const r: Router = Router();
 export default r;
@@ -13,7 +13,7 @@ r.post('/jwt', asyncWrapper(async (req, res) => {
 }));
 
 r.delete('/', asyncWrapper(async (req, res) => {
-	await destroy(res.locals.user.id);
+	await del(res.locals.user.id);
 	res.status(204).end();
 }));
 

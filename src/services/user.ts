@@ -77,7 +77,7 @@ export function update(id: string, user: Partial<SaveUser>, trx?: Transaction): 
 	], trx);
 }
 
-export function destroy(id: uuid, trx?: Transaction): Promise <void> {
+export function del(id: uuid, trx?: Transaction): Promise <void> {
 	return transact(
 		(db) => db(table).where({ id }).delete(),
 		trx,

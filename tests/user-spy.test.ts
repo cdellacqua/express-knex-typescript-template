@@ -5,7 +5,7 @@ import logger from '../src/log/logger';
 import * as userModule from '../src/services/user';
 
 before(() => {
-	chai.spy.on(userModule, 'destroy', () => {
+	chai.spy.on(userModule, 'del', () => {
 		logger.info('[EXAMPLE] You can alter any module using chai.spy');
 		return Promise.resolve();
 	});
