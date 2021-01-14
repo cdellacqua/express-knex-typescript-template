@@ -44,6 +44,7 @@ module.exports = {
 		'@typescript-eslint/no-explicit-any': 'off',
 		'@typescript-eslint/ban-types': 'off',
 		'no-useless-constructor': 'off',
+		'no-use-before-define': [2, 'nofunc']
 	},
 	settings: {
 		'import/resolver': {
