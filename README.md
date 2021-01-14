@@ -84,7 +84,6 @@ At the top level directory you can find the following files and folders:
 	- `startup`: contains scripts that needs to be executed during the application initialization
 		- `index.ts`: calls all the scripts in this directory
 		- `transact.ts`: setups the knex-transact library
-		- `tsyringe.ts`: registers classes in tsyringe that will be injected when calling container.resolve
 	- `types`: contains custom data types
 		- `common.ts`: contains simple custom data types
 	- `app.ts`: contains the express app initialization code, including the registrations of routers and middlewares

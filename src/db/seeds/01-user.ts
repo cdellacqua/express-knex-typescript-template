@@ -1,11 +1,10 @@
 import { transact } from '@cdellacqua/knex-transact';
 import { Transaction } from 'knex';
-import { container } from 'tsyringe';
-import { UserService } from '../../services/user';
+import { create } from '../../services/user';
 
 export async function seed(trx: Transaction): Promise<void> {
 	return transact([
-		(db) => container.resolve(UserService).create({
+		(db) => create({
 			email: 'user@example.com',
 			enabled: true,
 			password: 'password',

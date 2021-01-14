@@ -1,9 +1,6 @@
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 
-import server from '../src';
-import knex from '../src/db';
-
 const serverUrl = `http://${process.env.HOST}:${process.env.PORT}`;
 
 const user = {
@@ -65,8 +62,4 @@ describe('user', () => {
 				done();
 			});
 	});
-});
-
-after((done) => {
-	server.close(() => knex.destroy(() => done()));
 });

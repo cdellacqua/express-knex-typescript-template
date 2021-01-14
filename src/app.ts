@@ -4,7 +4,7 @@ import bodyParser from 'body-parser';
 import morgan from 'morgan';
 import path from 'path';
 import routes from './routes';
-import { logger } from './log/logger';
+import logger from './log/logger';
 import { HttpError } from './http/error';
 
 const app = express();

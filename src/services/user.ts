@@ -8,99 +8,97 @@ import {
 } from '../db/utils';
 import { uuid } from '../types/common';
 
-export class UserService {
-	table = 'user';
+const table = 'user';
 
-	columns = [
-		'id',
-		'email',
-		'passwordHash',
-		'enabled',
-		'minJwtIat',
-		'createdAt',
-	];
+const columns = [
+	'id',
+	'email',
+	'passwordHash',
+	'enabled',
+	'minJwtIat',
+	'createdAt',
+];
 
-	async login({ email, password }: LoginParams): Promise<AuthResponse | null> {
-		const user = await this.find({ email, enabled: true });
-		if (!user) {
-			return null;
-		}
-		const passwordMatches = await bcrypt.compare(password, user.passwordHash);
-		if (!passwordMatches) {
-			return null;
-		}
-		return this.generateAuthResponse(user);
+export async function login({ email, password }: LoginParams): Promise<AuthResponse | null> {
+	const user = await find({ email, enabled: true });
+	if (!user) {
+		return null;
 	}
+	const passwordMatches = await bcrypt.compare(password, user.passwordHash);
+	if (!passwordMatches) {
+		return null;
+	}
+	return generateAuthResponse(user);
+}
 
-	generateAuthResponse(user: User): AuthResponse {
-		return {
-			jwt: this.createJwt(user),
-			user: {
-				createdAt: user.createdAt,
-				email: user.email,
+export function generateAuthResponse(user: User): AuthResponse {
+	return {
+		jwt: createJwt(user),
+		user: {
+			createdAt: user.createdAt,
+			email: user.email,
+			enabled: user.enabled,
+			id: user.id,
+			minJwtIat: user.minJwtIat,
+		},
+	};
+}
+
+export function createJwt(user: User): string {
+	const token = jwt.sign({}, config.secret, {
+		expiresIn: config.authentication.tokenExpirationSeconds,
+		subject: user.id,
+	});
+	return token;
+}
+
+function rowMapper(row: any): Promise<User> {
+	return Promise.resolve({
+		...row,
+	});
+}
+
+export const find = findOneGenerator(table, columns, (row) => rowMapper(row));
+
+export const fromQuery = fromQueryGenerator<User>(columns, (row) => rowMapper(row));
+
+export function create(user: SaveUser, trx?: Transaction): Promise<User> {
+	return transact([
+		async (db) => insertGetId(db(table)
+			.insert({
+				email: user.email.toLowerCase(),
+				passwordHash: await bcrypt.hash(user.password, 10),
 				enabled: user.enabled,
-				id: user.id,
+				minJwtIat: user.minJwtIat || new Date(),
+			})),
+		(db, id) => find(id, db),
+	], trx);
+}
+
+export function update(id: string, user: Partial<SaveUser>, trx?: Transaction): Promise<User> {
+	return transact([
+		async (db) => db(table)
+			.where({ id })
+			.update({
+				email: user.email?.toLowerCase(),
+				passwordHash: user.password && await bcrypt.hash(user.password, 10),
+				enabled: user.enabled,
 				minJwtIat: user.minJwtIat,
-			},
-		};
-	}
+			}),
+		(db) => find(id, db),
+	], trx);
+}
 
-	createJwt(user: User): string {
-		const token = jwt.sign({}, config.secret, {
-			expiresIn: config.authentication.tokenExpirationSeconds,
-			subject: user.id,
-		});
-		return token;
-	}
-
-	private rowMapper(row: any): Promise<User> {
-		return Promise.resolve({
-			...row,
-		});
-	}
-
-	find = findOneGenerator(this.table, this.columns, (row) => this.rowMapper(row));
-
-	fromQuery = fromQueryGenerator<User>(this.columns, (row) => this.rowMapper(row));
-
-	create(user: SaveUser, trx?: Transaction): Promise<User> {
-		return transact([
-			async (db) => insertGetId(db(this.table)
-				.insert({
-					email: user.email.toLowerCase(),
-					passwordHash: await bcrypt.hash(user.password, 10),
-					enabled: user.enabled,
-					minJwtIat: user.minJwtIat || new Date(),
-				})),
-			(db, id) => this.find(id, db),
-		], trx);
-	}
-
-	update(id: string, user: Partial<SaveUser>, trx?: Transaction): Promise<User> {
-		return transact([
-			async (db) => db(this.table)
-				.where({ id })
-				.update({
-					email: user.email?.toLowerCase(),
-					passwordHash: user.password && await bcrypt.hash(user.password, 10),
-					enabled: user.enabled,
-					minJwtIat: user.minJwtIat,
-				}),
-			(db) => this.find(id, db),
-		], trx);
-	}
-
-	delete(id: uuid, trx?: Transaction): Promise<void> {
-		return transact(
-			(db) => db(this.table).where({ id }).delete(),
-			trx,
-		);
-	}
+export function destroy(id: uuid, trx?: Transaction): Promise <void> {
+	return transact(
+		(db) => db(table).where({ id }).delete(),
+		trx,
+	);
 }
 
 export interface LoginParams {
-  email: string;
-  password: string;
+	email: string;
+	password: string;
 }
 
 export interface User {
@@ -120,6 +118,6 @@ export interface SaveUser {
 }
 
 export interface AuthResponse {
-  jwt: string;
-  user: Omit<User, 'passwordHash'>;
+	jwt: string;
+	user: Omit<User, 'passwordHash'>;
 }

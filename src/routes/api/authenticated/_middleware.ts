@@ -1,10 +1,9 @@
 import { SerializableError } from '@cdellacqua/serializable-error';
 import jwt from 'jsonwebtoken';
-import { container } from 'tsyringe';
 import { asyncWrapper } from '@cdellacqua/express-async-wrapper';
 import { HttpError } from '../../../http/error';
 import config from '../../../config';
-import { UserService } from '../../../services/user';
+import { find } from '../../../services/user';
 
 // TODO: customize your authorization logic
 const middleware = asyncWrapper(async (req, res, next) => {
@@ -20,8 +19,7 @@ const middleware = asyncWrapper(async (req, res, next) => {
 	if (!decoded) {
 		throw new HttpError(401, 'unauthorized', new SerializableError('jwt decode returned falsy value'));
 	}
-	const userService = container.resolve(UserService);
-	const user = await userService.find(decoded.sub);
+	const user = await find(decoded.sub);
 	if (!user) {
 		throw new HttpError(401, 'unauthorized', new SerializableError('jwt refers to missing user'));
 	}

@@ -3,4 +3,3 @@
 require('dotenv').config();
 
 import './transact';
-import './tsyringe';
