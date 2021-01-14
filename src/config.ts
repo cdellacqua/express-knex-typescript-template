@@ -14,7 +14,7 @@ const config = {
 		level: process.env.LOG_LEVEL!,
 	},
 	shutdown: {
-		interval: Number(process.env.SHUTDOWN_INTERVAL_SECONDS || 10),
+		interval: Number(process.env.SHUTDOWN_INTERVAL_SECONDS),
 	},
 };
 
