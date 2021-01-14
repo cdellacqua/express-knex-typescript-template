@@ -9,7 +9,7 @@ type DoneFunction = () => {};
 export const mochaHooks = {
 	beforeAll(done: DoneFunction): void {
 		server.listen(config.http.port, config.http.hostname, () => {
-			logger.info(`App started at http://${config.http.hostname}:${config.http.port}/`);
+			logger.info(`Test server started at http://${config.http.hostname}:${config.http.port}/`);
 			done();
 		});
 	},
