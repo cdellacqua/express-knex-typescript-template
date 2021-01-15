@@ -90,6 +90,8 @@ At the top level directory you can find the following files and folders:
 	- `config.ts`: wraps environment variables in a typed object
 	- `index.ts`: startup the express application and exports the HTTP server for external usage (for example: testing)
 - `tests`: contains the tests scripts, based on mocha and chai
+	- `nested`: shows that it's possible to have subfolder under your tests directory
+		- `create-user.test.ts`: tests the direct creation of a user using the service function
 	- `hello.test.ts`: tests the example routes
 	- `user.test.ts`: tests the user management routes
 - `views`: contains all the `pug` files used to server-side render HTML pages

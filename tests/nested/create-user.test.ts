@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { create } from '../../src/services/user';
 
-describe('crud', () => {
+describe('user creation', () => {
 	it('creates a user', (done) => {
 		create({
 			email: 'hello@test.com',
