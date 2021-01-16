@@ -79,7 +79,7 @@ At the top level directory you can find the following files and folders:
 		- `ssr`: contains all routes that respond to the client with pre-rendered HTML content
 			- `index.ts`: registers the routes of this directory and exports the express router object
 		- `index.ts`: registers the routes of this directory and exports the express router object
-	- `services`: contains all the services of your application. What "service" means to you depends on how much abstraction you want to put in your code, in this template a service is intended as a class containing methods that are needed to communicate with the database or, more in general, that manages the appliation logic
+	- `services`: contains all the services of your application. What "service" means to you depends on how much abstraction you want to put in your code, in this template a service is intended as a module containing functions that are needed to communicate with the database or, more in general, that manages the application logic
 		- `user.ts`: service that manages basic user logic
 	- `startup`: contains scripts that needs to be executed during the application initialization
 		- `index.ts`: calls all the scripts in this directory
