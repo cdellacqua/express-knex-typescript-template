@@ -23,8 +23,8 @@ app.use(morgan(':remote-addr - :remote-user ":method :url HTTP/:http-version" :s
 	},
 }));
 
-// TODO: if you want to disable or customize CORS support you can comment or edit the next line
-app.use(cors());
+// TODO: if you want to enable or customize CORS support you can uncomment or edit the next line
+// app.use(cors());
 
 if (process.env.NODE_ENV === 'development') {
 	Error.stackTraceLimit = Infinity;
