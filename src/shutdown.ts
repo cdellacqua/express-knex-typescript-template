@@ -3,7 +3,8 @@ import { Socket } from 'net';
 import { Server } from 'http';
 import config from './config';
 import logger from './log/logger';
-import { noop, sleep, waitImmediate } from './helpers/lambdas';
+import { noop } from './helpers/lambdas';
+import { sleep, waitImmediate } from './helpers/time';
 import knex from './db';
 
 export function shutdownable(server: Server): Server {
