@@ -1,3 +1,5 @@
+// TODO: remove this test
+
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 
