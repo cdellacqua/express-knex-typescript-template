@@ -43,7 +43,7 @@ export function createMultiGenerator<TSave, TEntity>(
 			const entries: TEntity[] = [];
 			await transact(
 				saveValues.map(
-					(value) => (_trx) => createOne(value, _trx)
+					(value) => (_trx: Transaction) => createOne(value, _trx)
 						.then((entry) => entries.push(entry)),
 				),
 				trx,
@@ -63,7 +63,7 @@ export function createMultiGeneratorWithKey<TKey, TSave, TEntity>(
 			const entries: TEntity[] = [];
 			await transact(
 				saveValues.map(
-					(value) => async (_trx) => createOne(value.key, value.data, _trx)
+					(value) => async (_trx: Transaction) => createOne(value.key, value.data, _trx)
 						.then((entry) => entries.push(entry)),
 				),
 				trx,

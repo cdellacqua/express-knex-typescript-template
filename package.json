@@ -50,7 +50,7 @@
 	},
 	"dependencies": {
 		"@cdellacqua/express-async-wrapper": "^1.0.2",
-		"@cdellacqua/knex-transact": "^1.0.8",
+		"@cdellacqua/knex-transact": "^2.0.0",
 		"@cdellacqua/serializable-error": "^1.1.0",
 		"bcryptjs": "^2.4.3",
 		"body-parser": "^1.19.0",
