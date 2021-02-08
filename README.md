@@ -24,7 +24,7 @@ _Note: never add the .env file to git or any other version control system. It's 
 This template provides a set of useful scripts that can be called using the `npm run <script>` syntax.
 These scripts are:
 - `test`: tests the application using [mocha](https://www.npmjs.com/package/mocha) and [chai](https://www.npmjs.com/package/chai)
-- `test:prepare`: prepares the application for the test, for example, by reinitializing the local development database
+- `test:prepare`: prepares the application for the test, for example, by starting and reinitializing the local development database
 - `build`: runs the typescript compiler to build your application
 - `prestart`: runs all the pending migration before the `start` script using the `migrate-nobuild` script
 - `start`: starts a node process that will execute this package

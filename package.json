@@ -5,7 +5,7 @@
 	"main": "build/index.js",
 	"scripts": {
 		"test": "npm run test:prepare && cross-env NODE_ENV=test mocha 'tests/**/*.ts'",
-		"test:prepare": "cross-env NODE_ENV=test knex migrate:rollback --all && cross-env NODE_ENV=test npm run migrate-seed",
+		"test:prepare": "docker-compose up -d && cross-env NODE_ENV=test knex migrate:rollback --all && cross-env NODE_ENV=test npm run migrate-seed",
 		"build": "rimraf build && tsc",
 		"prestart": "npm run migrate-nobuild",
 		"start": "node .",
