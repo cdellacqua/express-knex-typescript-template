@@ -1,6 +1,7 @@
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import spies from 'chai-spies';
+import { HttpStatus } from '../src/http/status';
 import logger from '../src/log/logger';
 import * as userModule from '../src/services/user';
 import { del } from '../src/services/user';
@@ -41,7 +42,7 @@ describe('user', () => {
 			.set('Authorization', `Bearer ${jwt}`)
 			.end((err, res) => {
 				if (err) done(err);
-				expect(res.status).to.equal(204);
+				expect(res.status).to.equal(HttpStatus.NoContent);
 				done();
 			});
 	});

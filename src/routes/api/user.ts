@@ -3,6 +3,7 @@ import { body } from 'express-validator';
 import { asyncWrapper } from '@cdellacqua/express-async-wrapper';
 import { login } from '../../services/user';
 import { rejectOnFailedValidation } from '../../helpers/validator';
+import { HttpStatus } from '../../http/status';
 
 const r: Router = Router();
 export default r;
@@ -17,8 +18,8 @@ r.post('/jwt', [
 		password: req.body.password,
 	});
 	if (!loginResult) {
-		res.status(401).end();
+		res.status(HttpStatus.Unauthorized).end();
 	} else {
-		res.status(201).json(loginResult);
+		res.status(HttpStatus.Created).json(loginResult);
 	}
 }));

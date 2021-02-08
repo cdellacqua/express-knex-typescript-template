@@ -1,5 +1,6 @@
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
+import { HttpStatus } from '../src/http/status';
 
 const serverUrl = `http://${process.env.HOST}:${process.env.PORT}`;
 
@@ -48,7 +49,7 @@ describe('user', () => {
 			.get('/api/auth/goodbye')
 			.end((err, res) => {
 				if (err) done(err);
-				expect(res.status).to.equal(401);
+				expect(res.status).to.equal(HttpStatus.Unauthorized);
 				done();
 			});
 	});
@@ -58,7 +59,7 @@ describe('user', () => {
 			.set('Authorization', `Bearer ${jwt}`)
 			.end((err, res) => {
 				if (err) done(err);
-				expect(res.status).to.equal(204);
+				expect(res.status).to.equal(HttpStatus.NoContent);
 				done();
 			});
 	});

@@ -6,6 +6,7 @@ import path from 'path';
 import routes from './routes';
 import logger from './log/logger';
 import { HttpError } from './http/error';
+import { HttpStatus } from './http/status';
 
 const app = express();
 
@@ -51,12 +52,12 @@ app.use((err: Error, req: express.Request, res: express.Response, _: express.Nex
 		}
 	} else {
 		logger.error(err);
-		res.status(500).end();
+		res.status(HttpStatus.InternalServerError).end();
 	}
 });
 
 app.use((_: express.Request, res: express.Response) => {
-	res.status(404).render('404');
+	res.status(HttpStatus.NotFound).render('404');
 });
 
 export default app;
