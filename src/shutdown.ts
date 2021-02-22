@@ -58,6 +58,7 @@ export function shutdownable(server: Server): Server {
 			await closeActiveSockets(shutdownTimestamp);
 			await knex.destroy();
 			logger.warn('Graceful shutdown completed, bye');
+			process.exit(0);
 		});
 	}
 
