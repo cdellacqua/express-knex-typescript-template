@@ -62,8 +62,10 @@ export function shutdownable(server: Server): Server {
 		});
 	}
 
-	process.once('SIGTERM', close);
-	process.once('SIGINT', close);
+	server.once('listening', () => {
+		process.once('SIGTERM', close);
+		process.once('SIGINT', close);
+	});
 
 	return server;
 }
