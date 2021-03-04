@@ -1,4 +1,3 @@
-import './startup';
 import { Socket } from 'net';
 import { Server } from 'http';
 import config from './config';
