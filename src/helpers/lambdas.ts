@@ -7,3 +7,7 @@ export function identityPromise<T>(value: T): Promise<T> {
 }
 
 export const noop = (): void => undefined;
+
+export function unary<I, O>(fn: ((x: I) => O)): (x: I) => O {
+	return (x) => fn(x);
+}
