@@ -8,7 +8,7 @@
 		"test:prepare": "docker-compose up -d && cross-env NODE_ENV=test knex migrate:rollback --all && cross-env NODE_ENV=test npm run migrate-seed",
 		"build": "rimraf build && tsc",
 		"prestart": "npm run migrate-nobuild",
-		"start": "node --unhandled-rejections=strict .",
+		"start": "node --unhandled-rejections=strict --enable-source-maps .",
 		"dev": "nodemon .",
 		"lint": "eslint .",
 		"lint:fix": "eslint --fix .",
