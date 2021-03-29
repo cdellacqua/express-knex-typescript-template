@@ -61,7 +61,10 @@ At the top level directory you can find the following files and folders:
 		- `index.ts`: exports the knex instance configured using the process.env.NODE_ENV variable
 		- `utils.ts`: contains a set of useful functions that can be used to easily create common I/O mechanism with the database
 	- `helpers`:
+		- `collection.ts`: contains a set of utility functions that operate on arrays
 		- `lambdas.ts`: contains a set of simple lambdas
+		- `parallel.ts`: contains a set of utility functions for Promises
+		- `time.ts`: contains a set of utility functions that help with time based callbacks
 		- `validator.ts`: exports a middleware that can be used along with express-validator to automatically reject requests that do not pass all the validation steps
 	- `http`:
 		- `error.ts`: a custom Error class that is used to immediately stop a request and return a status code and a message to the client
