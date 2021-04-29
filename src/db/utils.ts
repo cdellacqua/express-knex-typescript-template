@@ -9,7 +9,7 @@ export function insertGetIds<T>(query: QueryBuilder): Promise<T[]> {
 	return query.returning<T[]>('id');
 }
 
-export type OrderByColumn = {column: string; order: 'asc'|'desc'};
+export type OrderByColumn = {column: string, order: 'asc'|'desc'};
 
 export type OrderByArray = OrderByColumn[];
 

@@ -63,7 +63,7 @@ export function create(user: SaveUser, trx?: Transaction): Promise<User> {
 	], trx);
 }
 
-export function update(id: string, user: Partial<SaveUser>, trx?: Transaction): Promise<User> {
+export function update(id: uuid, user: Partial<SaveUser>, trx?: Transaction): Promise<User> {
 	return transact([
 		async (db) => db(table)
 			.where({ id })
@@ -97,27 +97,27 @@ export async function login({ email, password }: LoginParams): Promise<AuthRespo
 }
 
 export interface LoginParams {
-	email: string;
-	password: string;
+	email: string,
+	password: string,
 }
 
 export interface User {
-	id: string;
-	email: string;
-	passwordHash: string;
-	enabled: boolean;
-	minJwtIat: Date;
-	createdAt: Date;
+	id: uuid,
+	email: string,
+	passwordHash: string,
+	enabled: boolean,
+	minJwtIat: Date,
+	createdAt: Date,
 }
 
 export interface SaveUser {
-	email: string;
-	password: string;
-	enabled: boolean;
-	minJwtIat?: Date;
+	email: string,
+	password: string,
+	enabled: boolean,
+	minJwtIat?: Date,
 }
 
 export interface AuthResponse {
-	jwt: string;
-	user: Omit<User, 'passwordHash'>;
+	jwt: string,
+	user: Omit<User, 'passwordHash'>,
 }
