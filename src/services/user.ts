@@ -8,16 +8,18 @@ import {
 } from '../db/utils';
 import { uuid } from '../types/common';
 
-const table = 'user';
+export const table = 'user';
 
-const columns = [
-	'id',
-	'email',
-	'passwordHash',
-	'enabled',
-	'minJwtIat',
-	'createdAt',
-];
+export const cols = {
+	id: 'id',
+	email: 'email',
+	passwordHash: 'passwordHash',
+	enabled: 'enabled',
+	minJwtIat: 'minJwtIat',
+	createdAt: 'createdAt',
+};
+
+const columnNames = Object.values(cols);
 
 export function createJwt(user: User): string {
 	const token = jwt.sign({}, config.secret, {
@@ -40,24 +42,24 @@ export function generateAuthResponse(user: User): AuthResponse {
 	};
 }
 
-function rowMapper(row: any): Promise<User> {
+function rowMapper(row: UserRaw): Promise<User> {
 	return Promise.resolve({
 		...row,
 	});
 }
 
-export const find = findOneGenerator(table, columns, (row) => rowMapper(row));
+export const find = findOneGenerator(table, columnNames, (row) => rowMapper(row));
 
-export const fromQuery = fromQueryGenerator<User>(columns, (row) => rowMapper(row));
+export const fromQuery = fromQueryGenerator<User>(columnNames, (row) => rowMapper(row));
 
 export function create(user: SaveUser, trx?: Transaction): Promise<User> {
 	return transact([
 		async (db) => insertGetId(db(table)
 			.insert({
-				email: user.email.toLowerCase(),
-				passwordHash: await bcrypt.hash(user.password, 10),
-				enabled: user.enabled,
-				minJwtIat: user.minJwtIat || new Date(),
+				[cols.email]: user.email.toLowerCase(),
+				[cols.passwordHash]: await bcrypt.hash(user.password, 10),
+				[cols.enabled]: user.enabled,
+				[cols.minJwtIat]: user.minJwtIat || new Date(),
 			})),
 		(db, id) => find(id, db),
 	], trx);
@@ -68,10 +70,10 @@ export function update(id: uuid, user: Partial<SaveUser>, trx?: Transaction): Pr
 		async (db) => db(table)
 			.where({ id })
 			.update({
-				email: user.email?.toLowerCase(),
-				passwordHash: user.password && await bcrypt.hash(user.password, 10),
-				enabled: user.enabled,
-				minJwtIat: user.minJwtIat,
+				[cols.email]: user.email?.toLowerCase(),
+				[cols.passwordHash]: user.password && await bcrypt.hash(user.password, 10),
+				[cols.enabled]: user.enabled,
+				[cols.minJwtIat]: user.minJwtIat,
 			}),
 		(db) => find(id, db),
 	], trx);
@@ -79,13 +81,16 @@ export function update(id: uuid, user: Partial<SaveUser>, trx?: Transaction): Pr
 
 export function del(id: uuid, trx?: Transaction): Promise <void> {
 	return transact(
-		(db) => db(table).where({ id }).delete(),
+		(db) => db(table).where({ [cols.id]: id }).delete(),
 		trx,
 	);
 }
 
 export async function login({ email, password }: LoginParams): Promise<AuthResponse | null> {
-	const user = await find({ email, enabled: true });
+	const user = await find({
+		[cols.email]: email.toLowerCase(),
+		[cols.enabled]: true,
+	});
 	if (!user) {
 		return null;
 	}
@@ -102,6 +107,15 @@ export interface LoginParams {
 }
 
 export interface User {
+	id: uuid,
+	email: string,
+	passwordHash: string,
+	enabled: boolean,
+	minJwtIat: Date,
+	createdAt: Date,
+}
+
+export interface UserRaw {
 	id: uuid,
 	email: string,
 	passwordHash: string,
