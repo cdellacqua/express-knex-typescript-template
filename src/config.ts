@@ -8,7 +8,7 @@ const config = {
 	authentication: {
 		tokenExpirationSeconds: Number(process.env.JWT_EXPIRATION_SECONDS),
 	},
-	environment: process.env.NODE_ENV!,
+	environment: process.env.NODE_ENV! as 'development'|'staging'|'production',
 	secret: process.env.SECRET!,
 	log: {
 		level: process.env.LOG_LEVEL!,
