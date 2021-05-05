@@ -29,7 +29,7 @@ export function shutdownable(server: Server): Server {
 			}
 
 			if (activeSockets.length === 0) {
-				logger.warn('No active sockets to forcibly shutdown');
+				logger.info('No active sockets to forcibly shutdown');
 			} else {
 				logger.warn(`${activeSockets.length} socket${activeSockets.length === 1 ? '' : 's'} still active, forcing shutdown...`);
 				activeSockets.forEach((socket) => {
@@ -56,7 +56,7 @@ export function shutdownable(server: Server): Server {
 		server.close(async () => { // Stop accepting new connections
 			await closeActiveSockets(shutdownTimestamp);
 			await knex.destroy();
-			logger.warn('Graceful shutdown completed, bye');
+			logger.info('Graceful shutdown completed, bye');
 			process.exit(0);
 		});
 	}
