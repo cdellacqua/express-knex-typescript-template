@@ -24,7 +24,7 @@ app.use(morgan(':remote-addr - :remote-user ":method :url HTTP/:http-version" :s
 	},
 }));
 
-// TODO: You can edit the next lineto enable CORS in production or customize the following behavior
+// TODO: You can edit the next line to enable CORS in production or customize the following behavior
 if (config.environment === 'development') {
 	app.use(cors({ maxAge: 36000 }));
 }
