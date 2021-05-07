@@ -1,9 +1,17 @@
 import { SerializableError } from '@cdellacqua/serializable-error';
 
+function sanitizePath(path: string): string {
+	const sanitized = `/${path.replace(/\/$/, '').replace(/^\//, '')}`;
+	return sanitized === '/' ? '' : sanitized;
+}
+
 const config = {
 	http: {
-		hostname: process.env.HOST!,
-		port: Number(process.env.PORT),
+		hostname: process.env.HTTP_HOST!,
+		port: Number(process.env.HTTP_PORT),
+		origin: process.env.HTTP_ORIGIN?.replace(/\/$/, ''),
+		path: process.env.HTTP_PATH! && sanitizePath(process.env.HTTP_PATH!),
+		baseUrl: `${process.env.HTTP_ORIGIN?.replace(/\/$/, '')}${process.env.HTTP_PATH! && sanitizePath(process.env.HTTP_PATH!)}`,
 	},
 	authentication: {
 		tokenExpirationSeconds: Number(process.env.JWT_EXPIRATION_SECONDS),
@@ -16,6 +24,12 @@ const config = {
 	shutdown: {
 		interval: Number(process.env.SHUTDOWN_INTERVAL_SECONDS),
 	},
+	product: {
+		name: process.env.PRODUCT_NAME!,
+		shortName: process.env.PRODUCT_SHORT_NAME!,
+		locale: process.env.PRODUCT_LOCALE!,
+	},
+	signedUrlExpirationSeconds: Number(process.env.SIGNED_URL_EXPIRATION_SECONDS),
 };
 
 function recursiveCheck(obj: Record<string, any>, path: string[] = []) {

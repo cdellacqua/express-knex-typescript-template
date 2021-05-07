@@ -10,6 +10,9 @@ import config from './config';
 
 const app = express();
 
+// Pug default locals
+app.locals.config = config;
+
 // TODO: if your application is behind a proxy, you can specify its IP address.
 // By default, it is assumed that the Node.js process runs behind a proxy on the same machine, so the loopback
 // interface is specified

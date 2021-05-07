@@ -1,7 +1,9 @@
 //- TODO: set the document language, statically like in this example or dynamically by injecting it through a variable
 doctype html
-html(lang='it')
+html(lang=config.product.locale)
 	head
+		base(href=config.http.path+'/')
+
 		meta(name='theme-color' content='#ffffff')
 		meta(http-equiv='X-UA-Compatible' content='IE=edge')
 
@@ -12,9 +14,9 @@ html(lang='it')
 		title Hello
 
 		//- TODO: reference an existing favicon
-		link(rel='icon' type='image/png' href='/favicon.png')
+		link(rel='icon' type='image/png' href='favicon.png')
 
-		link(rel='stylesheet' href='/main.css')
+		link(rel='stylesheet' href='main.css')
 		block head
 	body
 		main

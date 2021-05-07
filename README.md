@@ -71,16 +71,13 @@ At the top level directory you can find the following files and folders:
 	- `log`:
 		- `logger.ts`: configure and exports a logger based on the [winston](https://www.npmjs.com/package/winston) library
 	- `routes`: contains all the exposed end points of the application, you can choose the structure that better fits your needs. This template provides a simple structure based on multiple express routers that are registered hierarchically, following the directory structure
-		- `api`: contains all routes that go under /api
-			- `authenticated`: contains all the routes only authorized users can access with a valid JWT
-				- `_middleware.ts`: contains a basic authorization middleware that should fit most use-cases, you can customize it if you need to
-				- `goodbye.ts`: example authorized route
-				- `index.ts`: registers the routes of this directory and exports the express router object
-				- `user.ts`: contains a route that can be used by the client to renew its JWT if the one it has is near its expiration
+		- `authenticated`: contains all the routes only authorized users can access with a valid JWT
+			- `_middleware.ts`: contains a basic authorization middleware that should fit most use-cases, you can customize it if you need to
+			- `goodbye.ts`: example authorized route
 			- `index.ts`: registers the routes of this directory and exports the express router object
-			- `user.ts`: contains an authentication route for the client
-		- `ssr`: contains all routes that respond to the client with pre-rendered HTML content
-			- `index.ts`: registers the routes of this directory and exports the express router object
+			- `user.ts`: contains a route that can be used by the client to renew its JWT if the one it has is near its expiration
+		- `index.ts`: registers the routes of this directory and exports the express router object
+		- `user.ts`: contains an authentication route for the client
 		- `index.ts`: registers the routes of this directory and exports the express router object
 	- `services`: contains all the services of your application. What "service" means to you depends on how much abstraction you want to put in your code, in this template a service is intended as a module containing functions that are needed to communicate with the database or, more in general, that manages the application logic
 		- `user.ts`: service that manages basic user logic
@@ -101,7 +98,7 @@ At the top level directory you can find the following files and folders:
 	- `common`: contains shared `pug` markup
 		- `layout.pug`: a basic `pug` page with placeholders for head and main content
 	- `hello-world.pug`: example page that extends layout.pug and contains a paragraph
-- `www`: contains static files that will be served to the client. By default these files are served under `/`, without any prefix. In development mode, these files are served by express, but once in production they should be served by a reverse-proxy like nginx to maximize performance
+- `public`: contains static files that will be served to the client. By default these files are served under `/`, without any prefix. In development mode, these files are served by express, but once in production they should be served by a reverse-proxy like nginx to maximize performance
 	- `main.css`: a simple example css file referenced by layout.pug
 - `.env`: contains your environment variables
 - `.env.example`: template for .env

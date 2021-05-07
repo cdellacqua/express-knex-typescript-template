@@ -1,9 +1,10 @@
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import spies from 'chai-spies';
-import { HttpStatus } from '../src/http/status';
-import logger from '../src/log/logger';
-import * as userModule from '../src/services/user';
+import { HttpStatus } from '../../src/http/status';
+import logger from '../../src/log/logger';
+import * as userModule from '../../src/services/user';
+import config from '../../src/config';
 
 before(() => {
 	chai.spy.on(userModule, userModule.del.name, () => {
@@ -13,7 +14,7 @@ before(() => {
 });
 chai.use(spies);
 
-const serverUrl = `http://${process.env.HOST}:${process.env.PORT}`;
+const serverUrl = config.http.baseUrl;
 
 const user = {
 	email: 'user@example.com',
@@ -26,7 +27,7 @@ describe('user', () => {
 	let jwt = '';
 	it('gets jwt', (done) => {
 		chai.request(serverUrl)
-			.post('/api/user/jwt')
+			.post('/user/jwt')
 			.send(user)
 			.end((err, res) => {
 				if (err) done(err);
@@ -37,7 +38,7 @@ describe('user', () => {
 	});
 	it('deletes a user but the function gets intercepted by chai.spy', (done) => {
 		chai.request(serverUrl)
-			.delete('/api/auth/user')
+			.delete('/auth/user')
 			.set('Authorization', `Bearer ${jwt}`)
 			.end((err, res) => {
 				if (err) done(err);

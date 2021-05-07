@@ -1,10 +1,10 @@
 import { SerializableError } from '@cdellacqua/serializable-error';
 import jwt from 'jsonwebtoken';
 import { asyncWrapper } from '@cdellacqua/express-async-wrapper';
-import { HttpError } from '../../../http/error';
-import config from '../../../config';
-import { find } from '../../../services/user';
-import { HttpStatus } from '../../../http/status';
+import { HttpError } from '../../http/error';
+import config from '../../config';
+import { find } from '../../services/user';
+import { HttpStatus } from '../../http/status';
 
 // TODO: customize your authorization logic
 const middleware = asyncWrapper(async (req, res, next) => {

@@ -14,7 +14,7 @@ export function range(min: number, max?: number): number[] {
 export function chunk<T>(arr: T[], chunkLength: number): T[][] {
 	const chunked = new Array<T[]>(Math.ceil(arr.length / chunkLength));
 	for (let i = 0; i < chunked.length; i++) {
-		chunked[i] = arr.slice(i * chunkLength, i * chunkLength + chunkLength);
+		chunked[i] = arr.slice(i * chunkLength, (i * chunkLength) + chunkLength);
 	}
 
 	return chunked;
