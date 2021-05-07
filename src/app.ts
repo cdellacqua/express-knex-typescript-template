@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
-import path from 'path';
+import { join } from 'path';
 import routes from './routes';
 import logger from './log/logger';
 import { HttpError } from './http/error';
@@ -18,7 +18,7 @@ app.locals.config = config;
 // interface is specified
 app.set('trust proxy', 'loopback');
 
-app.set('views', path.join(__dirname, '..', '/views'));
+app.set('views', join(__dirname, '..', 'views', 'pages'));
 app.set('view engine', 'pug');
 
 app.use(morgan(':remote-addr - :remote-user ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent" :response-time ms', {
