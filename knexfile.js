@@ -6,6 +6,7 @@ const config = {
 		user: process.env.DB_USER,
 		password: process.env.DB_PASS,
 	},
+	debug: ['development', 'test'].includes(process.env.NODE_ENV),
 	pool: {
 		min: 2,
 		max: 10,
@@ -22,16 +23,8 @@ const config = {
 };
 
 module.exports = {
-	development: {
-		...config,
-		debug: true,
-	},
-	test: {
-		...config,
-		debug: false,
-	},
-	production: {
-		...config,
-		debug: false,
-	},
+	development: config,
+	test: config,
+	staging: config,
+	production: config,
 };
