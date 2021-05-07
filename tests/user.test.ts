@@ -13,6 +13,21 @@ chai.use(chaiHttp);
 
 describe('user', () => {
 	let jwt = '';
+	it('fails to get a jwt', (done) => {
+		chai.request(serverUrl)
+			.post('/api/user/jwt')
+			.send({
+				email: 'not-a-valid-email.address',
+				password: undefined,
+			})
+			.end((err, res) => {
+				if (err) done(err);
+				expect(res.status).equals(HttpStatus.UnprocessableEntity);
+				expect(res.body).to.be.instanceOf(Array);
+				expect(res.body[0].msg).equals('Invalid value');
+				done();
+			});
+	});
 	it('gets jwt', (done) => {
 		chai.request(serverUrl)
 			.post('/api/user/jwt')
