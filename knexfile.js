@@ -1,5 +1,3 @@
-require('dotenv').config();
-
 const config = {
 	client: 'postgresql',
 	connection: {

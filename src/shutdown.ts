@@ -1,31 +1,26 @@
 import { Socket } from 'net';
 import { Server } from 'http';
-import config from './config';
 import logger from './log/logger';
 import { sleep, waitImmediate } from './runtime/delay';
-import knex from './db';
 import { noop } from './runtime';
 
-export function shutdownable(server: Server): Server {
+export function shutdownable(server: Server): Server & { closeWithSockets: (timeoutMs: number) => Promise<void> } {
 	const activeSockets: Socket[] = [];
 	server.on('connection', (socket) => {
 		activeSockets.push(socket);
 		socket.on('close', () => activeSockets.splice(activeSockets.indexOf(socket), 1));
 	});
 
-	async function closeActiveSockets(shutdownTimestamp: number) {
+	async function closeActiveSockets(timeoutMs: number) {
 		if (activeSockets.length > 0) {
-			const activeTimestamp = Math.round(Date.now() / 1000);
-			const remainingSeconds = config.shutdown.interval - (activeTimestamp - shutdownTimestamp);
+			const remainingSeconds = Math.floor(timeoutMs / 1000);
 			if (remainingSeconds > 0) {
 				logger.warn(
-					`Server stopped but ${
-						activeSockets.length
-					} socket${
-						activeSockets.length === 1 ? ' is' : 's are'
+					`Server stopped but ${activeSockets.length
+					} socket${activeSockets.length === 1 ? ' is' : 's are'
 					} still active, waiting ${remainingSeconds}s before forcing shutdown...`,
 				);
-				await sleep(remainingSeconds * 1000);
+				await sleep(timeoutMs);
 			}
 
 			if (activeSockets.length === 0) {
@@ -44,27 +39,11 @@ export function shutdownable(server: Server): Server {
 		}
 	}
 
-	let closing = false;
-	function close() {
-		if (closing) {
-			return;
-		}
-		closing = true;
+	// eslint-disable-next-line no-param-reassign
+	(server as any).closeWithSockets = async (timeoutMs: number) => {
+		await new Promise((resolve, reject) => server.close((err) => (err ? reject(err) : resolve(undefined))));
+		await closeActiveSockets(timeoutMs);
+	};
 
-		logger.warn('Received shutdown signal, closing server...');
-		const shutdownTimestamp = Math.round(Date.now() / 1000);
-		server.close(async () => { // Stop accepting new connections
-			await closeActiveSockets(shutdownTimestamp);
-			await knex.destroy();
-			logger.info('Graceful shutdown completed, bye');
-			process.exit(0);
-		});
-	}
-
-	server.once('listening', () => {
-		process.once('SIGTERM', close);
-		process.once('SIGINT', close);
-	});
-
-	return server;
+	return server as Server & { closeWithSockets: (timeoutMs: number) => Promise<void> };
 }

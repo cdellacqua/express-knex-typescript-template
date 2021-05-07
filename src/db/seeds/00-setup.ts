@@ -1,5 +1,5 @@
-import '../../startup';
+import { start } from '../../lifecycle';
 
-export function seed(): Promise<void> {
-	return Promise.resolve();
+export async function seed(): Promise<void> {
+	await start({ queues: false, server: false });
 }

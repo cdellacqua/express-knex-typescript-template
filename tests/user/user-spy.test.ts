@@ -6,13 +6,17 @@ import logger from '../../src/log/logger';
 import * as userModule from '../../src/services/user';
 import config from '../../src/config';
 
+chai.use(spies);
+
 before(() => {
 	chai.spy.on(userModule, userModule.del.name, () => {
 		logger.info('[EXAMPLE] You can alter any module using chai.spy');
 		return Promise.resolve();
 	});
 });
-chai.use(spies);
+after(() => {
+	chai.spy.restore(userModule);
+});
 
 const serverUrl = config.http.baseUrl;
 

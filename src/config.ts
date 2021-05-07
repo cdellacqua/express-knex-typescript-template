@@ -16,7 +16,7 @@ const config = {
 	authentication: {
 		tokenExpirationSeconds: Number(process.env.JWT_EXPIRATION_SECONDS),
 	},
-	environment: process.env.NODE_ENV! as 'development'|'staging'|'production',
+	environment: process.env.NODE_ENV! as 'development'|'staging'|'production'|'test',
 	secret: process.env.SECRET!,
 	log: {
 		level: process.env.LOG_LEVEL!,
@@ -30,6 +30,23 @@ const config = {
 		locale: process.env.PRODUCT_LOCALE!,
 	},
 	signedUrlExpirationSeconds: Number(process.env.SIGNED_URL_EXPIRATION_SECONDS),
+	queue: {
+		attempts: Number(process.env.QUEUE_MAX_ATTEMPTS),
+		backoff: {
+			type: process.env.QUEUE_BACKOFF_TYPE!,
+			delay: Number(process.env.QUEUE_BACKOFF_DELAY),
+		},
+	},
+	smtp: {
+		default: {
+			port: Number(process.env.SMTP_PORT),
+			host: process.env.SMTP_HOST!,
+			ssl: process.env.SMTP_SSL!,
+			username: process.env.SMTP_USER!,
+			password: process.env.SMTP_PASS!,
+			from: process.env.SMTP_FROM!,
+		},
+	},
 };
 
 function recursiveCheck(obj: Record<string, any>, path: string[] = []) {

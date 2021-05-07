@@ -8,7 +8,7 @@ const serverUrl = config.http.baseUrl;
 
 chai.use(chaiHttp);
 
-describe('signed urls', async () => {
+describe('signed urls', () => {
 	let signedUrl: string;
 	it('constructs a signed url', async () => {
 		signedUrl = await signUrl('/hello-signed');

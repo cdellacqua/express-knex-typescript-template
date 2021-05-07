@@ -1,0 +1,16 @@
+extends _layout.pug
+
+block title
+	| #{__('Verify your email')}
+
+block content
+	tr
+		td(style=style.td)
+			| #{__('Welcome to :product!', { product: config.product.name })}
+	tr
+		td(style=style.td)
+			| #{__('Open the following link to verify your email address:')}
+			br
+			br
+			p(style="text-align:center")
+				a(style=style.a href=link target="_blank")= __('Verify')

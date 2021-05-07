@@ -1,9 +1,18 @@
-import './startup';
-
-import config from './config';
+import { nullary } from './algebra/functions';
+import { start, stop } from './lifecycle';
 import logger from './log/logger';
-import server from './server';
 
-server.listen(config.http.port, config.http.hostname, () => {
-	logger.info(`App started at http://${config.http.hostname}:${config.http.port}/`);
-});
+start({ queues: true, server: true });
+
+async function verboseStop() {
+	logger.warn('Received shutdown signal, closing server...');
+	try {
+		await stop();
+		process.exit(0);
+	} catch (err) {
+		logger.error(err);
+	}
+}
+
+process.once('SIGTERM', nullary(verboseStop));
+process.once('SIGINT', nullary(verboseStop));

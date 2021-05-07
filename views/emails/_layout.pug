@@ -1,0 +1,25 @@
+include ./_style.pug
+
+doctype html
+html(lang=config.product.locale)
+	head
+		meta(http-equiv="Content-Type" content="text/html; charset=UTF-8")
+		meta(charset="utf-8")
+		meta(name="viewport" content="width=device-width, initial-scale=1.0")
+		block head
+		title 
+			block title
+	body(style=style.body)
+		div(style=style.wrapper)
+			table(style=style.mainTable)
+				tr
+					td(style=style.titleTd)
+						h1(style=style.titleH1)
+							block title
+				tr
+					td(style=style.td)
+						| &nbsp;
+				block content
+				tr
+					td(style=style.td)
+						| &nbsp;
