@@ -18,14 +18,14 @@ const middleware = asyncWrapper(async (req, res, next) => {
 		throw new HttpError(HttpStatus.Unauthorized, 'unauthorized', err);
 	}
 	if (!decoded) {
-		throw new HttpError(HttpStatus.Unauthorized, 'unauthorized', new SerializableError('jwt decode returned falsy value'));
+		throw new HttpError(HttpStatus.Unauthorized, 'unauthorized', new SerializableError('jwt decode returned a falsy value'));
 	}
 	const user = await find(decoded.sub);
 	if (!user) {
-		throw new HttpError(HttpStatus.Unauthorized, 'unauthorized', new SerializableError('jwt refers to missing user'));
+		throw new HttpError(HttpStatus.Unauthorized, 'unauthorized', new SerializableError('jwt refers to a missing user'));
 	}
 	if (!user.enabled) {
-		throw new HttpError(HttpStatus.Unauthorized, 'unauthorized', new SerializableError('jwt refers to disabled user'));
+		throw new HttpError(HttpStatus.Unauthorized, 'unauthorized', new SerializableError('jwt refers to a disabled user'));
 	}
 	if (user.minJwtIat.getTime() > decoded.iat * 1000) {
 		throw new HttpError(HttpStatus.Unauthorized, 'unauthorized', new SerializableError('jwt iat is less than the min required for the specified user'));
