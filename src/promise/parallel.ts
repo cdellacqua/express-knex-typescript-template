@@ -1,6 +1,6 @@
-import { chunk } from './collection';
+import { chunk } from '../collection';
 
-export async function awaitParallel(fns: (() => Promise<any>)[], concurrency?: number): Promise<void> {
+export async function parallelize(fns: (() => Promise<any>)[], concurrency?: number): Promise<void> {
 	if (!concurrency) {
 		await Promise.all(fns.map((fn) => fn()));
 	} else {

@@ -2,9 +2,9 @@ import { Socket } from 'net';
 import { Server } from 'http';
 import config from './config';
 import logger from './log/logger';
-import { noop } from './helpers/lambdas';
-import { sleep, waitImmediate } from './helpers/time';
+import { sleep, waitImmediate } from './runtime/delay';
 import knex from './db';
+import { noop } from './runtime';
 
 export function shutdownable(server: Server): Server {
 	const activeSockets: Socket[] = [];
