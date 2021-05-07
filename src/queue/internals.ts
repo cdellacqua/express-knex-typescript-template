@@ -21,7 +21,7 @@ export const queues: Record<QueueName, Queue> = emptyQueueRecord();
 const schedulers: Record<QueueName, QueueScheduler> = emptyQueueRecord();
 export const workers: Record<QueueName, Worker> = emptyQueueRecord();
 
-export async function startQueues(): Promise<void> {
+export async function start(): Promise<void> {
 	Object.values(QueueName).forEach((queueName) => {
 		queues[queueName] = new Queue(queueName, {
 			defaultJobOptions: {
