@@ -1,9 +1,9 @@
-import Knex from 'knex';
+import { knex } from 'knex';
 import config from '../config';
 
 // eslint-disable-next-line
-const knexfile = require('../../knexfile.js');
+const knexFile = require('../../knexfile.js');
 
-const knex = Knex(knexfile[config.environment]);
+const knexInstance = knex(knexFile[config.environment]);
 
-export default knex;
+export default knexInstance;

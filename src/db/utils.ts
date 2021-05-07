@@ -1,19 +1,20 @@
 import { transact } from '@cdellacqua/knex-transact';
 import { SerializableError } from '@cdellacqua/serializable-error';
 /* eslint-disable no-underscore-dangle */
-import { Transaction, QueryBuilder } from 'knex';
+import { Knex } from 'knex';
 import { Readable, Transform } from 'stream';
 import knex from '.';
+import { identity } from '../algebra/functions';
 
-export function insertGetIds<T>(query: QueryBuilder): Promise<T[]> {
-	return query.returning<T[]>('id');
+export function insertGetIds<T>(query: Knex.QueryBuilder): Promise<T[]> {
+	return query.returning('id').then(identity);
 }
 
 export type OrderByColumn = {column: string, order: 'asc'|'desc'};
 
 export type OrderByArray = OrderByColumn[];
 
-export async function insertGetId<T>(query: QueryBuilder): Promise<T> {
+export async function insertGetId<T>(query: Knex.QueryBuilder): Promise<T> {
 	const ids = await insertGetIds<T>(query);
 	if (ids.length === 0) {
 		throw new SerializableError('returned 0 rows');
@@ -21,11 +22,11 @@ export async function insertGetId<T>(query: QueryBuilder): Promise<T> {
 	return ids[0];
 }
 
-export async function selectId<T>(query: QueryBuilder): Promise<T> {
-	return (await query.pluck<T[]>('id'))[0];
+export async function selectId<T>(query: Knex.QueryBuilder): Promise<T> {
+	return query.pluck('id').then(identity).then((ids) => ids[0]);
 }
 
-function rowToEntityTransformStream<TEntity>(rowToEntity: (row: any, trx?: Transaction) => Promise<TEntity>, trx?: Transaction) {
+function rowToEntityTransformStream<TEntity>(rowToEntity: (row: any, trx?: Knex.Transaction) => Promise<TEntity>, trx?: Knex.Transaction) {
 	return new Transform({
 		objectMode: true,
 		transform(row, _, done) {
@@ -36,14 +37,14 @@ function rowToEntityTransformStream<TEntity>(rowToEntity: (row: any, trx?: Trans
 }
 
 export function createMultiGenerator<TSave, TEntity>(
-	createOne: (value: TSave, trx?: Transaction) => Promise<TEntity>,
+	createOne: (value: TSave, trx?: Knex.Transaction) => Promise<TEntity>,
 ) {
-	return async (saveValues: TSave[], trx?: Transaction): Promise<TEntity[]> => {
+	return async (saveValues: TSave[], trx?: Knex.Transaction): Promise<TEntity[]> => {
 		if (saveValues.length > 0) {
 			const entries: TEntity[] = [];
 			await transact(
 				saveValues.map(
-					(value) => (_trx: Transaction) => createOne(value, _trx)
+					(value) => (_trx: Knex.Transaction) => createOne(value, _trx)
 						.then((entry) => entries.push(entry)),
 				),
 				trx,
@@ -56,14 +57,14 @@ export function createMultiGenerator<TSave, TEntity>(
 }
 
 export function createMultiGeneratorWithKey<TKey, TSave, TEntity>(
-	createOne: (key: TKey, value: TSave, trx?: Transaction) => Promise<TEntity>,
+	createOne: (key: TKey, value: TSave, trx?: Knex.Transaction) => Promise<TEntity>,
 ) {
-	return async (saveValues: { key: TKey, data: TSave }[], trx?: Transaction): Promise<TEntity[]> => {
+	return async (saveValues: { key: TKey, data: TSave }[], trx?: Knex.Transaction): Promise<TEntity[]> => {
 		if (saveValues.length > 0) {
 			const entries: TEntity[] = [];
 			await transact(
 				saveValues.map(
-					(value) => async (_trx: Transaction) => createOne(value.key, value.data, _trx)
+					(value) => async (_trx: Knex.Transaction) => createOne(value.key, value.data, _trx)
 						.then((entry) => entries.push(entry)),
 				),
 				trx,
@@ -78,9 +79,9 @@ export function createMultiGeneratorWithKey<TKey, TSave, TEntity>(
 export function findOneGenerator<TFilter = Record<string, any> | string | number, TEntity = object>(
 	table: string,
 	columns: string[],
-	rowToEntity: (row: any, trx?: Transaction) => Promise<TEntity>,
+	rowToEntity: (row: any, trx?: Knex.Transaction) => Promise<TEntity>,
 ) {
-	return async (filter: TFilter, trx?: Transaction): Promise<TEntity | null> => {
+	return async (filter: TFilter, trx?: Knex.Transaction): Promise<TEntity | null> => {
 		const query = trx?.queryBuilder() || knex.queryBuilder();
 		const row = await query.table(table)
 			.where(
@@ -95,10 +96,10 @@ function findFirstsQuery<TFilter = Record<string, any> | string | number>(
 	table: string,
 	columns: string[],
 	filters: TFilter[],
-	trx?: Transaction,
+	trx?: Knex.Transaction,
 ) {
 	const query = trx?.queryBuilder() || knex.queryBuilder();
-	return filters.reduce<QueryBuilder>((_query, filter) => _query.unionAll(function findSingle() {
+	return filters.reduce<Knex.QueryBuilder>((_query, filter) => _query.unionAll(function findSingle() {
 		return this.table(table)
 			.where(
 				typeof filter === 'object' ? filter : { id: filter },
@@ -111,9 +112,9 @@ function findFirstsQuery<TFilter = Record<string, any> | string | number>(
 export function findFirstsGenerator<TFilter = Record<string, any> | string | number, TEntity = object>(
 	table: string,
 	columns: string[],
-	rowToEntity: (row: any, trx?: Transaction) => Promise<TEntity>,
+	rowToEntity: (row: any, trx?: Knex.Transaction) => Promise<TEntity>,
 ) {
-	return async (filters: TFilter[], trx?: Transaction): Promise<TEntity[]> => {
+	return async (filters: TFilter[], trx?: Knex.Transaction): Promise<TEntity[]> => {
 		if (filters.length > 0) {
 			const rows = await findFirstsQuery(table, columns, filters, trx);
 			if (rows.length !== filters.length) {
@@ -128,9 +129,9 @@ export function findFirstsGenerator<TFilter = Record<string, any> | string | num
 export function findFirstsStreamGenerator<TFilter = Record<string, any> | string | number, TEntity = object>(
 	table: string,
 	columns: string[],
-	rowToEntity: (row: any, trx?: Transaction) => Promise<TEntity>,
+	rowToEntity: (row: any, trx?: Knex.Transaction) => Promise<TEntity>,
 ) {
-	return (filters: TFilter[], trx?: Transaction): Readable => {
+	return (filters: TFilter[], trx?: Knex.Transaction): Readable => {
 		if (filters.length > 0) {
 			return findFirstsQuery(table, columns, filters, trx)
 				.pipe(rowToEntityTransformStream(rowToEntity, trx));
@@ -144,10 +145,10 @@ export function findFirstsStreamGenerator<TFilter = Record<string, any> | string
 function findMultiQuery<TFilter = Record<string, any> | string | number, TEntity = object>(
 	table: string,
 	columns: string[],
-	filters: TFilter[], orderBy?: OrderByArray, trx?: Transaction,
+	filters: TFilter[], orderBy?: OrderByArray, trx?: Knex.Transaction,
 ) {
 	const query = trx?.queryBuilder() || knex.queryBuilder();
-	return filters.reduce<QueryBuilder>((_query, filter) => _query.unionAll(function findSingle() {
+	return filters.reduce<Knex.QueryBuilder>((_query, filter) => _query.unionAll(function findSingle() {
 		return this.table(table)
 			.where(
 				typeof filter === 'object' ? filter : { id: filter },
@@ -159,9 +160,9 @@ function findMultiQuery<TFilter = Record<string, any> | string | number, TEntity
 export function findMultiGenerator<TFilter = Record<string, any> | string | number, TEntity = object>(
 	table: string,
 	columns: string[],
-	rowToEntity: (row: any, trx?: Transaction) => Promise<TEntity>,
+	rowToEntity: (row: any, trx?: Knex.Transaction) => Promise<TEntity>,
 ) {
-	return async (filters: TFilter[], orderBy?: OrderByArray, trx?: Transaction): Promise<TEntity[]> => {
+	return async (filters: TFilter[], orderBy?: OrderByArray, trx?: Knex.Transaction): Promise<TEntity[]> => {
 		if (filters.length > 0) {
 			const rows: any[] = await findMultiQuery(table, columns, filters, orderBy, trx);
 			return Promise.all(rows.map((row: any) => rowToEntity(row, trx)));
@@ -173,9 +174,9 @@ export function findMultiGenerator<TFilter = Record<string, any> | string | numb
 export function findMultiStreamGenerator<TFilter = Record<string, any> | string | number, TEntity = object>(
 	table: string,
 	columns: string[],
-	rowToEntity: (row: any, trx?: Transaction) => Promise<TEntity>,
+	rowToEntity: (row: any, trx?: Knex.Transaction) => Promise<TEntity>,
 ) {
-	return (filters: TFilter[], orderBy?: OrderByArray, trx?: Transaction): Readable => {
+	return (filters: TFilter[], orderBy?: OrderByArray, trx?: Knex.Transaction): Readable => {
 		if (filters.length > 0) {
 			return findMultiQuery(table, columns, filters, orderBy, trx)
 				.pipe(rowToEntityTransformStream(rowToEntity, trx));
@@ -189,12 +190,12 @@ export function findMultiStreamGenerator<TFilter = Record<string, any> | string 
 export function findGroupedMultiGenerator<TFilter = Record<string, any> | string | number, TEntity = object>(
 	table: string,
 	columns: string[],
-	rowToEntity: (row: any, trx?: Transaction) => Promise<TEntity>,
+	rowToEntity: (row: any, trx?: Knex.Transaction) => Promise<TEntity>,
 ) {
-	return async (filters: TFilter[], orderBy?: OrderByArray, trx?: Transaction): Promise<TEntity[][]> => {
+	return async (filters: TFilter[], orderBy?: OrderByArray, trx?: Knex.Transaction): Promise<TEntity[][]> => {
 		if (filters.length > 0) {
 			const query = trx?.queryBuilder() || knex.queryBuilder();
-			const rows: any[] = await filters.reduce<QueryBuilder>((_query, filter, index) => _query.unionAll(function findSingle() {
+			const rows: any[] = await filters.reduce<Knex.QueryBuilder>((_query, filter, index) => _query.unionAll(function findSingle() {
 				return this.table(table)
 					.where(
 						typeof filter === 'object' ? filter : { id: filter },
@@ -229,7 +230,7 @@ function findAllQuery<TFilter = Record<string, any> | string | number>(
 	columns: string[],
 	filter: TFilter,
 	orderBy?: OrderByArray,
-	trx?: Transaction,
+	trx?: Knex.Transaction,
 ) {
 	const query = trx?.queryBuilder() || knex.queryBuilder();
 	return query.table(table)
@@ -243,9 +244,9 @@ function findAllQuery<TFilter = Record<string, any> | string | number>(
 export function findAllGenerator<TFilter = Record<string, any> | string | number, TEntity = object>(
 	table: string,
 	columns: string[],
-	rowToEntity: (row: any, trx?: Transaction) => Promise<TEntity>,
+	rowToEntity: (row: any, trx?: Knex.Transaction) => Promise<TEntity>,
 ) {
-	return async (filter: TFilter, orderBy?: OrderByArray, trx?: Transaction): Promise<TEntity[]> => {
+	return async (filter: TFilter, orderBy?: OrderByArray, trx?: Knex.Transaction): Promise<TEntity[]> => {
 		const rows: any[] = await findAllQuery(table, columns, filter, orderBy, trx);
 		return Promise.all(rows.map((row: any) => rowToEntity(row, trx)));
 	};
@@ -254,21 +255,21 @@ export function findAllGenerator<TFilter = Record<string, any> | string | number
 export function findAllStreamGenerator<TFilter = Record<string, any> | string | number, TEntity = object>(
 	table: string,
 	columns: string[],
-	rowToEntity: (row: any, trx?: Transaction) => Promise<TEntity>,
+	rowToEntity: (row: any, trx?: Knex.Transaction) => Promise<TEntity>,
 ) {
 	return (
 		filter: TFilter,
 		orderBy?: OrderByArray,
-		trx?: Transaction,
+		trx?: Knex.Transaction,
 	): Readable => findAllQuery(table, columns, filter, orderBy, trx)
 		.pipe(rowToEntityTransformStream(rowToEntity, trx));
 }
 
 export function fromQueryGenerator<TEntity = object>(
 	columns: string[],
-	rowToEntity: (row: any, trx?: Transaction) => Promise<TEntity>,
+	rowToEntity: (row: any, trx?: Knex.Transaction) => Promise<TEntity>,
 ) {
-	return async (query: QueryBuilder, trx?: Transaction): Promise<TEntity[]> => {
+	return async (query: Knex.QueryBuilder, trx?: Knex.Transaction): Promise<TEntity[]> => {
 		const rows: any[] = await query.select(columns);
 		return Promise.all(rows.map((row: any) => rowToEntity(row, trx)));
 	};
@@ -276,8 +277,8 @@ export function fromQueryGenerator<TEntity = object>(
 
 export function fromQueryStreamGenerator<TEntity = object>(
 	columns: string[],
-	rowToEntity: (row: any, trx?: Transaction) => Promise<TEntity>,
+	rowToEntity: (row: any, trx?: Knex.Transaction) => Promise<TEntity>,
 ) {
-	return (query: QueryBuilder, trx?: Transaction): Readable => query.select(columns)
+	return (query: Knex.QueryBuilder, trx?: Knex.Transaction): Readable => query.select(columns)
 		.pipe(rowToEntityTransformStream(rowToEntity, trx));
 }

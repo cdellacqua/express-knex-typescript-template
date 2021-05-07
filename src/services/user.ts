@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import { Transaction } from 'knex';
+import { Knex } from 'knex';
 import { transact } from '@cdellacqua/knex-transact';
 import config from '../config';
 import {
@@ -54,7 +54,7 @@ export const find = findOneGenerator(table, columnNames, (row) => rowMapper(row)
 
 export const fromQuery = fromQueryGenerator<User>(columnNames, (row) => rowMapper(row));
 
-export function create(user: SaveUser, trx?: Transaction): Promise<User> {
+export function create(user: SaveUser, trx?: Knex.Transaction): Promise<User> {
 	return transact([
 		async (db) => insertGetId(db(table)
 			.insert({
@@ -67,7 +67,7 @@ export function create(user: SaveUser, trx?: Transaction): Promise<User> {
 	], trx);
 }
 
-export function update(id: uuid, user: Partial<SaveUser>, trx?: Transaction): Promise<User> {
+export function update(id: uuid, user: Partial<SaveUser>, trx?: Knex.Transaction): Promise<User> {
 	return transact([
 		async (db) => db(table)
 			.where({ id })
@@ -82,7 +82,7 @@ export function update(id: uuid, user: Partial<SaveUser>, trx?: Transaction): Pr
 	], trx);
 }
 
-export function del(id: uuid, trx?: Transaction): Promise <void> {
+export function del(id: uuid, trx?: Knex.Transaction): Promise <void> {
 	return transact(
 		(db) => db(table).where({ [cols.id]: id }).delete(),
 		trx,

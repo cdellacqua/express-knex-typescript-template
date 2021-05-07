@@ -21,6 +21,7 @@ module.exports = {
 		'no-console': 'off',
 		'import/prefer-default-export': 'off',
 		'no-plusplus': 'off',
+		'arrow-parens': ['warn', 'always'],
 		'no-tabs': [
 			'error',
 			{
@@ -44,7 +45,7 @@ module.exports = {
 		'@typescript-eslint/no-explicit-any': 'off',
 		'@typescript-eslint/ban-types': 'off',
 		'no-useless-constructor': 'off',
-		'no-use-before-define': [2, 'nofunc']
+		'no-use-before-define': ['error', 'nofunc']
 	},
 	settings: {
 		'import/resolver': {

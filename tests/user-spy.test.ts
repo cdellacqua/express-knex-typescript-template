@@ -4,10 +4,9 @@ import spies from 'chai-spies';
 import { HttpStatus } from '../src/http/status';
 import logger from '../src/log/logger';
 import * as userModule from '../src/services/user';
-import { del } from '../src/services/user';
 
 before(() => {
-	chai.spy.on(userModule, del.name, () => {
+	chai.spy.on(userModule, userModule.del.name, () => {
 		logger.info('[EXAMPLE] You can alter any module using chai.spy');
 		return Promise.resolve();
 	});
