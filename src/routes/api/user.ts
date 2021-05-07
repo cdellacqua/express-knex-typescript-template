@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { body } from 'express-validator';
 import { asyncWrapper } from '@cdellacqua/express-async-wrapper';
 import { login } from '../../services/user';
-import { validationMiddleware } from '../../http/validator';
+import { validationMiddleware } from '../../http/validation';
 import { HttpStatus } from '../../http/status';
 
 const r: Router = Router();
