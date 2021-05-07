@@ -18,7 +18,7 @@
 		"rollback:all": "npm run build && npm run knex migrate:rollback --all",
 		"seed": "npm run build && npm run knex seed:run",
 		"migrate-seed": "npm run build && npm run knex migrate:latest && npm run knex seed:run",
-		"setup": "node -r dotenv/config --unhandled-rejections=strict setup.js"
+		"setup": "node --unhandled-rejections=strict setup.js"
 	},
 	"keywords": [],
 	"private": true,
