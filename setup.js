@@ -4,6 +4,8 @@ const crypto = require('crypto');
 const { promisify } = require('util');
 const randomBytes = promisify(crypto.randomBytes);
 
+const projectName = path.basename(__dirname);
+
 (async () => {
 	const envPath = path.join(__dirname, '.env.example');
 	const envContent = (await fs.promises.readFile(envPath)).toString();
@@ -13,14 +15,17 @@ const randomBytes = promisify(crypto.randomBytes);
 
 (async () => {
 	const packagePath = path.join(__dirname, 'package.json');
-	const packageContent = (await fs.promises.readFile(packagePath)).toString();
-	await fs.promises.writeFile(packagePath, packageContent.replace(/"name":[^\r\n]+/, `"name": "${path.basename(__dirname)}",`));
+	const packageContent = JSON.parse((await fs.promises.readFile(packagePath)).toString());
+	packageContent.name = projectName;
+	await fs.promises.writeFile(packagePath, JSON.stringify(packageContent, undefined, 2));
 	console.info('updated package name in package.json');
 })();
 
 (async () => {
 	const packageLockPath = path.join(__dirname, 'package-lock.json');
-	const packageLockContent = (await fs.promises.readFile(packageLockPath)).toString();
-	await fs.promises.writeFile(packageLockPath, packageLockContent.replace(/"name":[^\r\n]+/, `"name": "${path.basename(__dirname)}",`));
+	const packageLockContent = JSON.parse((await fs.promises.readFile(packageLockPath)).toString());
+	packageLockContent.name = projectName;
+	packageLockContent.packages[''].name = projectName;
+	await fs.promises.writeFile(packageLockPath, JSON.stringify(packageLockContent, undefined, 2));
 	console.info('updated package name in package-lock.json');
 })();
