@@ -45,4 +45,4 @@ Thumbs.db
 .env.backup
 .env.production
 
-
+docker/**/data
