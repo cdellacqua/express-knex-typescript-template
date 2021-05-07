@@ -82,7 +82,7 @@ export function update(id: uuid, user: Partial<SaveUser>, trx?: Knex.Transaction
 	], trx);
 }
 
-export function del(id: uuid, trx?: Knex.Transaction): Promise <void> {
+export function del(id: uuid, trx?: Knex.Transaction): Promise<void> {
 	return transact(
 		(db) => db(table).where({ [cols.id]: id }).delete(),
 		trx,
