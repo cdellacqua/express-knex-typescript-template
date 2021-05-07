@@ -8,16 +8,6 @@ import config from '../../src/config';
 
 chai.use(spies);
 
-before(() => {
-	chai.spy.on(userModule, userModule.del.name, () => {
-		logger.info('[EXAMPLE] You can alter any module using chai.spy');
-		return Promise.resolve();
-	});
-});
-after(() => {
-	chai.spy.restore(userModule);
-});
-
 const serverUrl = config.http.baseUrl;
 
 const user = {
@@ -28,6 +18,16 @@ const user = {
 chai.use(chaiHttp);
 
 describe('user', () => {
+	before(() => {
+		chai.spy.on(userModule, userModule.del.name, () => {
+			logger.info('[EXAMPLE] You can alter any module using chai.spy');
+			return Promise.resolve();
+		});
+	});
+	after(() => {
+		chai.spy.restore(userModule);
+	});
+
 	let jwt = '';
 	it('gets jwt', (done) => {
 		chai.request(serverUrl)

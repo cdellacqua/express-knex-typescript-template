@@ -1,4 +1,4 @@
-import chai from 'chai';
+import chai, { expect } from 'chai';
 import spies from 'chai-spies';
 import * as emailModule from '../src/email';
 import { getTranslator } from '../src/i18n';
@@ -7,17 +7,17 @@ import logger from '../src/log/logger';
 
 chai.use(spies);
 
-before(() => {
-	chai.spy.on(emailModule, emailModule.send.name, () => {
-		logger.info('[ FAKE ] Email sent');
-		return Promise.resolve();
-	});
-});
-after(() => {
-	chai.spy.restore(emailModule);
-});
-
 describe('queue', () => {
+	before(() => {
+		chai.spy.on(emailModule, emailModule.send.name, () => {
+			logger.info('[ FAKE ] Email sent');
+			return Promise.resolve();
+		});
+	});
+	after(() => {
+		chai.spy.restore(emailModule);
+	});
+
 	it('enqueues an email', (done) => {
 		enqueueEmail({
 			from: emailModule.EmailFrom.default,
@@ -30,5 +30,15 @@ describe('queue', () => {
 			workers.email.on('completed', () => done());
 			workers.email.on('failed', (_, err) => done(err));
 		});
+	});
+	it('renders an email', () => {
+		const content = emailModule.render({
+			filename: 'email-verification.pug',
+			locals: {
+				link: 'http://test-link',
+			},
+		});
+		expect(content.html).to.contain('<html');
+		expect(content.text).to.contain('http://test-link');
 	});
 });

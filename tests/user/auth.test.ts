@@ -69,14 +69,4 @@ describe('user', () => {
 				done();
 			});
 	});
-	it('deletes a user', (done) => {
-		chai.request(serverUrl)
-			.delete('/auth/user')
-			.set('Authorization', `Bearer ${jwt}`)
-			.end((err, res) => {
-				if (err) done(err);
-				expect(res.status).to.equal(HttpStatus.NoContent);
-				done();
-			});
-	});
 });
