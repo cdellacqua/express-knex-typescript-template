@@ -8,6 +8,7 @@ export async function seed(trx: Transaction): Promise<void> {
 			email: 'user@example.com',
 			enabled: true,
 			password: 'password',
+			minJwtIat: new Date(),
 		}, db),
 	], trx);
 }

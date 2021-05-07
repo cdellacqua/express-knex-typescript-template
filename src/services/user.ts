@@ -17,6 +17,7 @@ export const cols = {
 	enabled: 'enabled',
 	minJwtIat: 'minJwtIat',
 	createdAt: 'createdAt',
+	updatedAt: 'updatedAt',
 };
 
 const columnNames = Object.values(cols);
@@ -38,6 +39,7 @@ export function generateAuthResponse(user: User): AuthResponse {
 			enabled: user.enabled,
 			id: user.id,
 			minJwtIat: user.minJwtIat,
+			updatedAt: user.updatedAt,
 		},
 	};
 }
@@ -59,7 +61,7 @@ export function create(user: SaveUser, trx?: Transaction): Promise<User> {
 				[cols.email]: user.email.toLowerCase(),
 				[cols.passwordHash]: await bcrypt.hash(user.password, 10),
 				[cols.enabled]: user.enabled,
-				[cols.minJwtIat]: user.minJwtIat || new Date(),
+				[cols.minJwtIat]: user.minJwtIat,
 			})),
 		(db, id) => find(id, db),
 	], trx);
@@ -74,6 +76,7 @@ export function update(id: uuid, user: Partial<SaveUser>, trx?: Transaction): Pr
 				[cols.passwordHash]: user.password && await bcrypt.hash(user.password, 10),
 				[cols.enabled]: user.enabled,
 				[cols.minJwtIat]: user.minJwtIat,
+				[cols.updatedAt]: new Date(),
 			}),
 		(db) => find(id, db),
 	], trx);
@@ -113,6 +116,7 @@ export interface User {
 	enabled: boolean,
 	minJwtIat: Date,
 	createdAt: Date,
+	updatedAt: Date,
 }
 
 export interface UserRaw {
@@ -122,13 +126,14 @@ export interface UserRaw {
 	enabled: boolean,
 	minJwtIat: Date,
 	createdAt: Date,
+	updatedAt: Date,
 }
 
 export interface SaveUser {
 	email: string,
 	password: string,
 	enabled: boolean,
-	minJwtIat?: Date,
+	minJwtIat: Date,
 }
 
 export interface AuthResponse {

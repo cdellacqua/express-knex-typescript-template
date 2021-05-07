@@ -7,6 +7,7 @@ describe('user creation', () => {
 			email: 'hello@test.com',
 			enabled: true,
 			password: 'password',
+			minJwtIat: new Date(),
 		}).then((user) => {
 			expect(user).to.have.property('id');
 			done();

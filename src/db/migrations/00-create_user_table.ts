@@ -8,6 +8,7 @@ export async function up(knex: Knex): Promise<void> {
 		table.boolean('enabled').notNullable();
 		table.timestamp('minJwtIat', { useTz: false }).notNullable().defaultTo(knex.fn.now());
 		table.timestamp('createdAt', { useTz: false }).notNullable().defaultTo(knex.fn.now());
+		table.timestamp('updatedAt', { useTz: false }).notNullable().defaultTo(knex.fn.now());
 	});
 }
 
