@@ -4,6 +4,7 @@ import {
 import IORedis from 'ioredis';
 import config from '../config';
 import logger from '../log/logger';
+import { noop } from '../runtime';
 import emailWorker from './workers/email';
 
 export enum QueueName {
@@ -22,14 +23,19 @@ export const queues: Record<QueueName, Queue> = emptyQueueRecord();
 const schedulers: Record<QueueName, QueueScheduler> = emptyQueueRecord();
 export const workers: Record<QueueName, Worker> = emptyQueueRecord();
 
-const connection = new IORedis(config.redis.port, config.redis.host, {
-	lazyConnect: true,
-}).on('error', (err) => logger.error(err));
-
 export async function start(): Promise<void> {
-	await connection.connect();
+	const connection = {
+		host: config.redis.host,
+		port: config.redis.port,
+	};
 
-	Object.values(QueueName).forEach((queueName) => {
+	const testConnection = new IORedis(connection.port, connection.host, {
+		lazyConnect: true,
+	});
+	await testConnection.connect();
+	testConnection.quit().catch(noop);
+
+	await Promise.all(Object.values(QueueName).map(async (queueName) => {
 		queues[queueName] = new Queue(queueName, {
 			defaultJobOptions: {
 				attempts: config.queue.attempts,
@@ -42,17 +48,15 @@ export async function start(): Promise<void> {
 		})
 			.on('error', (err) => logger.error(err));
 
-		schedulers[queueName] = new QueueScheduler(queueName, { 
-			connection,
-		})
+		schedulers[queueName] = new QueueScheduler(queueName, { connection })
 			.on('error', (err) => logger.error(err));
 
+		// Known issue: https://github.com/taskforcesh/bullmq/issues/452
+		// After reconnecting to redis the worker doesn't resume processing the queue
 		workers[queueName] = new Worker(
 			queueName,
 			emailWorker,
-			{
-				connection,
-			},
+			{ connection },
 		)
 			.on('active', ({ id }) => logger.info(
 				`[ QUEUE: ${queueName.padEnd(maxQueueNameLength, ' ')} ] Job "${id}" started`,
@@ -70,11 +74,23 @@ export async function start(): Promise<void> {
 				`[ QUEUE: ${queueName.padEnd(maxQueueNameLength, ' ')} ] Job "${id}" failed: ${err}`,
 			))
 			.on('error', (err) => logger.error(err));
-	});
+
+		await Promise.all([
+			queues[queueName].waitUntilReady(),
+			schedulers[queueName].waitUntilReady(),
+			workers[queueName].waitUntilReady(),
+		]);
+	}));
 }
 
 export async function stop(): Promise<void> {
-	await connection?.quit();
+	await Promise.all(
+		Object.values(QueueName).flatMap((queueName) => [
+			queues[queueName] && queues[queueName].close(),
+			schedulers[queueName] && schedulers[queueName].close(),
+			workers[queueName] && workers[queueName].close(),
+		]),
+	);
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
