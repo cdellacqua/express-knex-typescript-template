@@ -7,7 +7,7 @@ start({ queues: true, server: true })
 		logger.error(err);
 		logger.error('Startup failure, stopping...');
 		await stop().catch((stopErr) => logger.error(stopErr));
-		process.exit(0);
+		process.exit(1);
 	});
 
 async function verboseStop() {
