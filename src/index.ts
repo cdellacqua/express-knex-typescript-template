@@ -2,7 +2,13 @@ import { nullary } from './algebra/functions';
 import { start, stop } from './lifecycle';
 import logger from './log/logger';
 
-start({ queues: true, server: true });
+start({ queues: true, server: true })
+	.catch(async (err) => {
+		logger.error(err);
+		logger.error('Startup failure, stopping...');
+		await stop().catch((stopErr) => logger.error(stopErr));
+		process.exit(0);
+	});
 
 async function verboseStop() {
 	logger.warn('Received shutdown signal, closing server...');
