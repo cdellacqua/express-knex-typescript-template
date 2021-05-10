@@ -47,6 +47,10 @@ const config = {
 			from: process.env.SMTP_FROM!,
 		},
 	},
+	redis: {
+		port: Number(process.env.REDIS_PORT),
+		host: process.env.REDIS_HOST!,
+	},
 };
 
 function recursiveCheck(obj: Record<string, any>, path: string[] = []) {
