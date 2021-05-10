@@ -20,7 +20,7 @@ export async function start(startConfig?: SystemServices): Promise<void> {
 		throw new SerializableError('already started');
 	}
 
-	systemServices = startConfig || {};
+	systemServices = {};
 
 	// pg
 	pg.types.setTypeParser(pg.types.builtins.NUMERIC, (decimal: string): BigNumber => new BigNumber(decimal));
@@ -29,15 +29,35 @@ export async function start(startConfig?: SystemServices): Promise<void> {
 	knexTransactConfig.knexInstance = knex;
 
 	// job queues
-	if (systemServices?.queues) {
+	if (startConfig?.queues) {
 		await startQueues();
+		systemServices.queues = true;
 	}
 
 	// http server
-	if (systemServices?.server) {
-		server.listen(config.http.port, config.http.hostname, () => {
-			logger.info(`App started at http://${config.http.hostname}:${config.http.port}/`);
+	if (startConfig?.server) {
+		await new Promise<void>((resolve, reject) => {
+			function onFinish() {
+				server.off('listening', onListening);
+				server.off('error', onError);
+			}
+
+			function onListening() {
+				resolve();
+				onFinish();
+			}
+			function onError(err: Error) {
+				reject(err);
+				onFinish();
+			}
+
+			server.once('listening', onListening);
+			server.once('error', onError);
+
+			server.listen(config.http.port, config.http.hostname);
 		});
+		systemServices.server = true;
+		logger.info(`App started at http://${config.http.hostname}:${config.http.port}/`);
 	}
 }
 
