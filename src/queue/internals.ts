@@ -1,6 +1,7 @@
 import {
 	Queue, Worker, QueueScheduler,
 } from 'bullmq';
+import IORedis from 'ioredis';
 import config from '../config';
 import logger from '../log/logger';
 import emailWorker from './workers/email';
@@ -21,7 +22,13 @@ export const queues: Record<QueueName, Queue> = emptyQueueRecord();
 const schedulers: Record<QueueName, QueueScheduler> = emptyQueueRecord();
 export const workers: Record<QueueName, Worker> = emptyQueueRecord();
 
+const connection = new IORedis(config.redis.port, config.redis.host, {
+	lazyConnect: true,
+}).on('error', (err) => logger.error(err));
+
 export async function start(): Promise<void> {
+	await connection.connect();
+
 	Object.values(QueueName).forEach((queueName) => {
 		queues[queueName] = new Queue(queueName, {
 			defaultJobOptions: {
@@ -31,15 +38,21 @@ export async function start(): Promise<void> {
 					delay: config.queue.backoff.delay,
 				},
 			},
+			connection,
 		})
 			.on('error', (err) => logger.error(err));
 
-		schedulers[queueName] = new QueueScheduler(queueName)
+		schedulers[queueName] = new QueueScheduler(queueName, { 
+			connection,
+		})
 			.on('error', (err) => logger.error(err));
 
 		workers[queueName] = new Worker(
 			queueName,
 			emailWorker,
+			{
+				connection,
+			},
 		)
 			.on('active', ({ id }) => logger.info(
 				`[ QUEUE: ${queueName.padEnd(maxQueueNameLength, ' ')} ] Job "${id}" started`,
@@ -58,29 +71,10 @@ export async function start(): Promise<void> {
 			))
 			.on('error', (err) => logger.error(err));
 	});
-
-	await Promise.all(Object.values(QueueName).flatMap((queue) => [
-		queues[queue].waitUntilReady(),
-		schedulers[queue].waitUntilReady(),
-		workers[queue].waitUntilReady(),
-	]));
 }
 
 export async function stop(): Promise<void> {
-	// Cannot wait due to a bug that occurs when redis goes offline (even temporarily - tested locally)
-	// https://github.com/OptimalBits/bull/issues/1414
-	// Temporary fix
-	return new Promise((resolve) => {
-		const timeout = setTimeout(() => resolve(), 5000);
-		Promise.all([
-			...Object.values(queues || {}).map((q) => q.close()),
-			...Object.values(workers || {}).map((w) => w.close()),
-			...Object.values(schedulers || {}).map((s) => s.close()),
-		]).then(() => {
-			clearTimeout(timeout);
-			resolve();
-		});
-	});
+	await connection?.quit();
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
