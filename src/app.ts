@@ -7,6 +7,7 @@ import logger from './log/logger';
 import { HttpError } from './http/error';
 import { HttpStatus } from './http/status';
 import config from './config';
+import { getTranslator } from './i18n';
 
 const app = express();
 
@@ -39,6 +40,11 @@ if (config.environment === 'development') {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use((req, res, next) => {
+	// eslint-disable-next-line no-underscore-dangle
+	res.locals.__ = getTranslator(req.acceptsLanguages() || []);
+	next();
+});
 app.use('/', routes);
 
 app.use((err: Error, req: express.Request, res: express.Response, _: express.NextFunction) => {
