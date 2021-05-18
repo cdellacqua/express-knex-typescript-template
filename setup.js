@@ -25,7 +25,10 @@ const projectName = path.basename(__dirname);
 	const packageLockPath = path.join(__dirname, 'package-lock.json');
 	const packageLockContent = JSON.parse((await fs.promises.readFile(packageLockPath)).toString());
 	packageLockContent.name = projectName;
-	packageLockContent.packages[''].name = projectName;
+	// from lockfileVersion 2 there is an empty entry
+	if (packageLockContent.packages['']) {
+		packageLockContent.packages[''].name = projectName;
+	}
 	await fs.promises.writeFile(packageLockPath, JSON.stringify(packageLockContent, undefined, 2));
 	console.info('updated package name in package-lock.json');
 })();
