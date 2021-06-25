@@ -86,9 +86,9 @@ export async function start(): Promise<void> {
 export async function stop(): Promise<void> {
 	await Promise.all(
 		Object.values(QueueName).flatMap((queueName) => [
-			queues[queueName] && queues[queueName].close(),
-			schedulers[queueName] && schedulers[queueName].close(),
-			workers[queueName] && workers[queueName].close(),
+			queues[queueName] && queues[queueName].client.then((client) => client.disconnect(false)),
+			schedulers[queueName] && schedulers[queueName].client.then((client) => client.disconnect(false)),
+			workers[queueName] && workers[queueName].client.then((client) => client.disconnect(false)),
 		]),
 	);
 }
