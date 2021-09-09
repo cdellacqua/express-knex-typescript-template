@@ -21,5 +21,5 @@ r.use('/auth', authenticatedRoutes);
 // TODO: for development purposes express will serve static files from the public directory, in a production environment
 // this task should be performed by a reverse proxy to improve performance
 if (config.environment === 'development') {
-	r.use('/', expressStatic(join(__dirname, '..', '..', 'public')));
+	r.use('/', expressStatic(join(__dirname, '..', '..', '..', 'public')));
 }
