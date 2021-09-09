@@ -17,6 +17,7 @@ async function verboseStop() {
 		process.exit(0);
 	} catch (err) {
 		logger.error(err);
+		process.exit(2);
 	}
 }
 
