@@ -1,9 +1,8 @@
-import { transact } from '@cdellacqua/knex-transact';
+import { transact, config } from '@cdellacqua/knex-transact';
 import { SerializableError } from '@cdellacqua/serializable-error';
 /* eslint-disable no-underscore-dangle */
 import { Knex } from 'knex';
 import { Readable, Transform } from 'stream';
-import knex from '.';
 import { identity } from '../algebra/functions';
 
 export function insertGetIds<T>(query: Knex.QueryBuilder): Promise<T[]> {
@@ -82,7 +81,7 @@ export function findOneGenerator<TFilter = Record<string, any> | string | number
 	rowToEntity: (row: any, trx?: Knex.Transaction) => Promise<TEntity>,
 ) {
 	return async (filter: TFilter, trx?: Knex.Transaction): Promise<TEntity | null> => {
-		const query = trx?.queryBuilder() || knex.queryBuilder();
+		const query = trx?.queryBuilder() || config.knexInstance!.queryBuilder();
 		const row = await query.table(table)
 			.where(
 				typeof filter === 'object' ? filter : { id: filter },
@@ -98,7 +97,7 @@ function findFirstsQuery<TFilter = Record<string, any> | string | number>(
 	filters: TFilter[],
 	trx?: Knex.Transaction,
 ) {
-	const query = trx?.queryBuilder() || knex.queryBuilder();
+	const query = trx?.queryBuilder() || config.knexInstance!.queryBuilder();
 	return filters.reduce<Knex.QueryBuilder>((_query, filter) => _query.unionAll(function findSingle() {
 		return this.table(table)
 			.where(
@@ -147,7 +146,7 @@ function findMultiQuery<TFilter = Record<string, any> | string | number, TEntity
 	columns: string[],
 	filters: TFilter[], orderBy?: OrderByArray, trx?: Knex.Transaction,
 ) {
-	const query = trx?.queryBuilder() || knex.queryBuilder();
+	const query = trx?.queryBuilder() || config.knexInstance!.queryBuilder();
 	return filters.reduce<Knex.QueryBuilder>((_query, filter) => _query.unionAll(function findSingle() {
 		return this.table(table)
 			.where(
@@ -194,13 +193,13 @@ export function findGroupedMultiGenerator<TFilter = Record<string, any> | string
 ) {
 	return async (filters: TFilter[], orderBy?: OrderByArray, trx?: Knex.Transaction): Promise<TEntity[][]> => {
 		if (filters.length > 0) {
-			const query = trx?.queryBuilder() || knex.queryBuilder();
+			const query = trx?.queryBuilder() || config.knexInstance!.queryBuilder();
 			const rows: any[] = await filters.reduce<Knex.QueryBuilder>((_query, filter, index) => _query.unionAll(function findSingle() {
 				return this.table(table)
 					.where(
 						typeof filter === 'object' ? filter : { id: filter },
 					)
-					.select(...columns, knex.raw('? as "_group_"', [index]));
+					.select(...columns, config.knexInstance!.raw('? as "_group_"', [index]));
 			}, true), query).orderBy(orderBy ?? []);
 
 			const groups = rows.reduce((gs: any[][], row) => {
@@ -232,7 +231,7 @@ function findAllQuery<TFilter = Record<string, any> | string | number>(
 	orderBy?: OrderByArray,
 	trx?: Knex.Transaction,
 ) {
-	const query = trx?.queryBuilder() || knex.queryBuilder();
+	const query = trx?.queryBuilder() || config.knexInstance!.queryBuilder();
 	return query.table(table)
 		.where(
 			typeof filter === 'object' ? filter : { id: filter },
