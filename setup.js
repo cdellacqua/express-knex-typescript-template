@@ -25,7 +25,7 @@ const projectName = path.basename(__dirname);
 	const packageLockPath = path.join(__dirname, 'package-lock.json');
 	const packageLockContent = JSON.parse((await fs.promises.readFile(packageLockPath)).toString());
 	packageLockContent.name = projectName;
-	// from lockfileVersion 2 there is an empty entry
+	// lockfileVersion 2 added an empty entry representing the current project
 	if (packageLockContent.packages['']) {
 		packageLockContent.packages[''].name = projectName;
 	}
