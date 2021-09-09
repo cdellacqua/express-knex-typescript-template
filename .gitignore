@@ -46,3 +46,5 @@ Thumbs.db
 .env.production
 
 docker/**/data
+
+.nyc_output

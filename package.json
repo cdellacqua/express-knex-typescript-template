@@ -5,6 +5,7 @@
   "main": "build/index.js",
   "scripts": {
     "knex": "node -r dotenv/config node_modules/.bin/knex",
+		"coverage": "nyc npm run test",
     "test": "npm run test:prepare && cross-env NODE_ENV=test mocha 'tests/**/*.ts'",
     "test:prepare": "docker-compose down && docker-compose up -d && npm run build && npm run migrate && cross-env NODE_ENV=test npm run seed",
     "build": "rimraf build && tsc",
@@ -47,6 +48,7 @@
     "eslint-plugin-import": "^2.2.0",
     "mocha": "^8.2.1",
     "nodemon": "^2.0.6",
+    "nyc": "^15.1.0",
     "rimraf": "^3.0.2",
     "ts-node": "^9.0.0",
     "typescript": "^4.4.2"
