@@ -7,7 +7,7 @@
     "knex": "node -r dotenv/config node_modules/.bin/knex",
 		"coverage": "nyc npm run test",
     "test": "npm run test:prepare && cross-env NODE_ENV=test mocha 'tests/**/*.ts'",
-    "test:prepare": "docker-compose down && docker-compose up -d && npm run build && npm run migrate && cross-env NODE_ENV=test npm run seed",
+    "test:prepare": "npm run build && npm run migrate:down:all && npm run migrate && cross-env NODE_ENV=test npm run seed",
     "build": "rimraf build && tsc",
     "start": "node -r dotenv/config --unhandled-rejections=strict --enable-source-maps .",
     "dev": "nodemon",
