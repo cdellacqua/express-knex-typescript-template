@@ -20,7 +20,7 @@ function emptyQueueRecord(): Record<QueueName, any> {
 }
 
 export const queues: Record<QueueName, Queue> = emptyQueueRecord();
-const schedulers: Record<QueueName, QueueScheduler> = emptyQueueRecord();
+export const schedulers: Record<QueueName, QueueScheduler> = emptyQueueRecord();
 export const workers: Record<QueueName, Worker> = emptyQueueRecord();
 
 export async function start(): Promise<void> {
@@ -32,8 +32,12 @@ export async function start(): Promise<void> {
 	const testConnection = new IORedis(connection.port, connection.host, {
 		lazyConnect: true,
 	});
-	await testConnection.connect();
-	testConnection.quit().catch(noop);
+	try {
+		await testConnection.connect();
+		testConnection.quit().catch(noop);
+	} finally {
+		testConnection.disconnect(false);
+	}
 
 	await Promise.all(Object.values(QueueName).map(async (queueName) => {
 		queues[queueName] = new Queue(queueName, {
@@ -86,14 +90,14 @@ export async function start(): Promise<void> {
 export async function stop(): Promise<void> {
 	await Promise.all(
 		Object.values(QueueName).flatMap((queueName) => [
-			queues[queueName] && queues[queueName].client.then((client) => client.disconnect(false)),
-			schedulers[queueName] && schedulers[queueName].client.then((client) => client.disconnect(false)),
-			workers[queueName] && workers[queueName].client.then((client) => client.disconnect(false)),
+			queues[queueName] && queues[queueName].close(),
+			schedulers[queueName] && schedulers[queueName].close(),
+			workers[queueName] && workers[queueName].close(),
 		]),
 	);
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export async function enqueue(queue: QueueName, data?: any): Promise<void> {
-	await queues[queue].add(queue, data);
+export async function enqueue(queue: QueueName, data?: any): Promise<string> {
+	return queues[queue].add(queue, data).then((job) => job.id!);
 }
