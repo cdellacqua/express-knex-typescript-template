@@ -14,8 +14,8 @@ export enum EmailFrom {
 const pugConfig = {
 	pretty: true,
 	basedir: path.join(__dirname, '..', '..', 'views', 'emails'),
-	debug: config.environment === 'development',
 	cache: config.environment === 'production',
+	debug: false,
 	compileDebug: false,
 };
 
