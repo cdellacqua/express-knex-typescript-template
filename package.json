@@ -49,7 +49,7 @@
 		"nodemon": "^2.0.6",
 		"rimraf": "^3.0.2",
 		"ts-node": "^9.0.0",
-		"typescript": "^4.2.4"
+		"typescript": "^4.4.2"
 	},
 	"dependencies": {
 		"@cdellacqua/express-async-wrapper": "^1.0.2",
