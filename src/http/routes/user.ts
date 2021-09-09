@@ -1,9 +1,9 @@
 import { Router } from 'express';
 import { body } from 'express-validator';
 import { asyncWrapper } from '@cdellacqua/express-async-wrapper';
-import { login } from '../services/user';
-import { validationMiddleware } from '../http/validation';
-import { HttpStatus } from '../http/status';
+import { login } from '../../services/user';
+import { validationMiddleware } from '../validation';
+import { HttpStatus } from '../status';
 
 const r: Router = Router();
 export default r;

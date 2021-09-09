@@ -1,8 +1,8 @@
 import { Socket } from 'net';
 import { Server } from 'http';
-import logger from './log/logger';
-import { sleep, waitImmediate } from './runtime/delay';
-import { noop } from './runtime';
+import logger from '../log/logger';
+import { sleep, waitImmediate } from '../runtime/delay';
+import { noop } from '../runtime';
 
 export function shutdownable(server: Server): Server & { closeWithSockets: (timeoutMs: number) => Promise<void> } {
 	const activeSockets: Socket[] = [];

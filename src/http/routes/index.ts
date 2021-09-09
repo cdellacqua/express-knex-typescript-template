@@ -2,8 +2,8 @@ import { join } from 'path';
 import { Router, static as expressStatic } from 'express';
 import userRoutes from './user';
 import authenticatedRoutes from './authenticated';
-import { verifyUrlMiddleware } from '../crypto/url';
-import config from '../config';
+import { verifyUrlMiddleware } from '../../crypto/url';
+import config from '../../config';
 
 const r: Router = Router();
 export default r;

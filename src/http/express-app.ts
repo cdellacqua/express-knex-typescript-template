@@ -3,11 +3,11 @@ import cors from 'cors';
 import morgan from 'morgan';
 import { join } from 'path';
 import routes from './routes';
-import logger from './log/logger';
-import { HttpError } from './http/error';
-import { HttpStatus } from './http/status';
-import config from './config';
-import { getTranslator } from './i18n';
+import logger from '../log/logger';
+import { HttpError } from './error';
+import { HttpStatus } from './status';
+import config from '../config';
+import { getTranslator } from '../i18n';
 
 const app = express();
 
@@ -19,7 +19,7 @@ app.locals.config = config;
 // interface is specified
 app.set('trust proxy', 'loopback');
 
-app.set('views', join(__dirname, '..', 'views', 'pages'));
+app.set('views', join(__dirname, '..', '..', 'views', 'pages'));
 app.set('view engine', 'pug');
 
 app.use(morgan(':remote-addr - :remote-user ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent" :response-time ms', {

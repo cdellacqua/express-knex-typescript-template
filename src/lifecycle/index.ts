@@ -6,7 +6,7 @@ import knex from '../db';
 import { start as startQueues, stop as stopQueues } from '../queue';
 import config from '../config';
 import logger from '../log/logger';
-import server from '../server';
+import server from '../http/server';
 
 export interface SystemServices {
 	queues?: boolean,
