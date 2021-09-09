@@ -10,7 +10,7 @@
 		"build": "rimraf build && tsc",
 		"prestart": "npm run migrate-nobuild",
 		"start": "node -r dotenv/config --unhandled-rejections=strict --enable-source-maps .",
-		"dev": "nodemon .",
+		"dev": "nodemon",
 		"lint": "eslint .",
 		"lint:fix": "eslint --fix .",
 		"migrate": "npm run build && npm run knex migrate:latest",
