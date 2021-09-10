@@ -4,7 +4,7 @@
   "description": "",
   "main": "build/index.js",
   "scripts": {
-    "knex": "node -r dotenv/config node_modules/.bin/knex",
+    "knex": "node -r dotenv/config --unhandled-rejections=strict node_modules/.bin/knex",
 		"coverage": "nyc npm run test",
     "test": "npm run test:prepare && cross-env NODE_ENV=test mocha 'tests/**/*.ts'",
     "test:prepare": "npm run build && npm run migrate:down:all && npm run migrate && cross-env NODE_ENV=test npm run seed",
