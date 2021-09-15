@@ -1,6 +1,6 @@
 {
   "watch": ["src"],
   "ext": "ts",
-  "exec": "ts-node -r dotenv/config src/index.ts",
+  "exec": "cross-env NODE_OPTIONS='--unhandled-rejections=strict' ts-node -r dotenv/config src/index.ts",
 	"signal": "SIGTERM"
 }
