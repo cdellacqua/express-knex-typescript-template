@@ -10,8 +10,14 @@ start({ queues: true, server: true })
 		process.exit(1);
 	});
 
+let stopping = false;
 async function verboseStop() {
-	logger.warn('Received shutdown signal, closing server...');
+	if (stopping) {
+		logger.warn('Received shutdown signal but application is already stopping');
+		return;
+	}
+	logger.warn('Received shutdown signal, stopping...');
+	stopping = true;
 	try {
 		await stop();
 		process.exit(0);
@@ -21,5 +27,5 @@ async function verboseStop() {
 	}
 }
 
-process.once('SIGTERM', nullary(verboseStop));
-process.once('SIGINT', nullary(verboseStop));
+process.on('SIGTERM', nullary(verboseStop));
+process.on('SIGINT', nullary(verboseStop));
