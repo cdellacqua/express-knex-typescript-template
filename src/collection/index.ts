@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 export function range(min: number, max?: number): number[] {
 	if (max === undefined) {
 		max = min;
@@ -31,18 +30,18 @@ export function chain<T>(arr: T[]): T[][] {
 	return pairs;
 }
 
-export function pluck<T>(arr: any[], prop: string): T[] {
+export function pluck<T, K extends string | number | symbol, TArr extends { [key in K]: T }>(arr: TArr[], prop: K): T[] {
 	return arr.map((item) => item[prop]);
 }
 
-export function partition<T, TKey extends string|number>(arr: T[], partFn: ((v: T, i: number, arr: T[]) => TKey)): { [k in TKey]?: T[] } {
+export function partition<T, TKey extends string | number>(arr: T[], partFn: ((v: T, i: number, arr: T[]) => TKey)): { [k in TKey]?: T[] } {
 	return arr.reduce((part: { [k in TKey]?: T[] }, cur, i) => {
 		const key = partFn(cur, i, arr);
 
 		if (!part[key]) {
 			part[key] = [];
 		}
-		part[key]!.push(cur);
+		(part as { [k in TKey]: T[] })[key].push(cur);
 
 		return part;
 	}, {} as { [k in TKey]?: T[] });
