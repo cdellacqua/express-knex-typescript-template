@@ -13,8 +13,6 @@ Buzzwords ...or... What technologies does this project use:
 - Pug: HTML/XML/Plain Text Template engine
 - ESLint: linting library that enforces code style
 - Express.js: HTTP server library that provides a middleware-based architecture
-- BullMQ: Job Queue management library
-- Redis: In-Memory store, used by BullMQ
 - JWT: Json Web Tokens, used for authorization/authentication purposes
 - dotenv: library that imports environment variables from a `.env` file
 - Morgan & Winston: Logging middleware and logging library
@@ -39,7 +37,7 @@ _Note: never add the .env file to git or any other version control system. It's 
 ## Quick start
 
 Inside the project root directory open a shell and run:
-- `docker-compose up -d` to start the Redis and PostgreSQL containers
+- `docker-compose up -d` to start the PostgreSQL container
 - `npm run build` to build the typescript source files
 - `npm run migrate` to run all the pending migrations
 - `npm run seed` to seed the database with test data
@@ -75,11 +73,10 @@ These scripts are:
 
 ## docker
 
-This template includes a docker-compose.yml that is used to startup a PostgreSQL and a Redis container. The following commands can be used to manage the containers:
+This template includes a docker-compose.yml that is used to startup a PostgreSQL container. The following commands can be used to manage the containers:
 - `docker-compose up -d`: starts the containers in detached mode, so they won't block your shell
 - `docker-compose down`: stops and removes the containers, by default **removing also all the data**. To enable data persistence you just can uncomment some lines in docker-compose.yml as described in the file
 - `docker-compose exec postgres psql -U default -d default`: logs your shell into the PostgreSQL CLI client of the container
-- `docker-compose exec redis redis-cli`: logs your shell into the Redis CLI client of the container
 - `docker-compose build`: rebuilds the containers, useful if you edit the Dockerfile or to the init.sql script
 
 ## Project structure
@@ -88,7 +85,6 @@ At the top level directory you can find the following files and folders:
 
 - `docker`: contains containers definition and configuration files
 	- `postgres`: contains Dockerfile that describes a postgres docker image, used to setup a development database
-	- `redis`: contains Dockerfile that describes a postgres docker image, used to setup a development database
 - `public`: contains static files that will be served to HTTP clients. By default these files are served under `/`, without any prefix. In development mode, these files are served by express, but once in production they should be served by another application (e.g. nginx) to maximize performance
 	- `main.css`: a simple example css file referenced by layout.pug (see below)
 - `src`: contains all the typescript source code
@@ -135,11 +131,6 @@ At the top level directory you can find the following files and folders:
 		- `logger.ts`: configure and exports a logger based on the [winston](https://www.npmjs.com/package/winston) library
 	- `promise`: contains promise related functionalities
 		- `parallel.ts`: exports functionalities which help deal with parallelism
-	- `queue`: contains job queue management code
-		- `workers`: contains the queue workers code
-			- `email.ts`: exports a function that consumes the email queue
-		- `index.ts`: exports the queue functionalities
-		- `internals.ts`: contains the queue infrastructure management functions
 	- `runtime`: contains runtime related functionalities
 		- `delay.ts`: exports functions that helps manage delays between tasks
 		- `index.ts`: exports common runtime functionalities
@@ -159,7 +150,6 @@ At the top level directory you can find the following files and folders:
 	- `_hooks.ts`: setup file that prepares the application for testing
 	- `hello.test.ts`: tests the example routes
 	- `jsconfig.json`: helps the IDE find the typings needed for the testing library
-	- `queue.test.ts`: tests the BullMQ-based queues
 - `views`: contains all the `pug` files used to server-side render HTML pages
 	- `emails`: contains the email views
 		- `common`: contains shared `pug` markup
@@ -180,7 +170,7 @@ At the top level directory you can find the following files and folders:
 - `.eslintrc.js`: contains the eslint configuration
 - `.gitignore`: describes what should and shouldn't be committed to git
 - `.mocharc.js`: initializes the testing library mocha
-- `docker-compose.yml`: describes the docker project (which by default consists of the postgres and redis containers)
+- `docker-compose.yml`: describes the docker project (which by default consists of a postgres container)
 - `knexfile.js`: contains the database connection settings for different environment (production, development, staging and test)
 - `nodemon.json`: specifies some rules for nodemon
 - `package-lock.json`: keeps track of the exact version of all the installed dependencies

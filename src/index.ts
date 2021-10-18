@@ -2,7 +2,7 @@ import { nullary } from './algebra/functions';
 import { start, stop } from './lifecycle';
 import logger from './log/logger';
 
-start({ queues: true, server: true })
+start()
 	.catch(async (err) => {
 		logger.error(err);
 		logger.error('Startup failure, stopping...');

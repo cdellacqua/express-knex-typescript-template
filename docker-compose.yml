@@ -13,12 +13,3 @@ services:
       - POSTGRES_PASSWORD=default
     ports:
       - 5432:5432
-
-  redis:
-    build:
-      context: ./docker/redis
-    # To enable data persistence, uncomment the following lines
-    # volumes:
-    #   - ./docker/redis/data:/data
-    ports:
-      - 6379:6379

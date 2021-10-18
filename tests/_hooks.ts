@@ -5,7 +5,7 @@ type DoneFunction = () => {};
 
 export const mochaHooks = {
 	beforeAll(done: DoneFunction): void {
-		start({ queues: true, server: true })
+		start()
 			.then(nullary(done));
 	},
 	afterAll(done: DoneFunction): void {

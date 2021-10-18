@@ -30,13 +30,6 @@ const config = {
 		locale: process.env.PRODUCT_LOCALE!,
 	},
 	signedUrlExpirationSeconds: Number(process.env.SIGNED_URL_EXPIRATION_SECONDS),
-	queue: {
-		attempts: Number(process.env.QUEUE_MAX_ATTEMPTS),
-		backoff: {
-			type: process.env.QUEUE_BACKOFF_TYPE!,
-			delay: Number(process.env.QUEUE_BACKOFF_DELAY),
-		},
-	},
 	smtp: {
 		default: {
 			port: Number(process.env.SMTP_PORT),
@@ -46,10 +39,6 @@ const config = {
 			password: process.env.SMTP_PASS!,
 			from: process.env.SMTP_FROM!,
 		},
-	},
-	redis: {
-		port: Number(process.env.REDIS_PORT),
-		host: process.env.REDIS_HOST!,
 	},
 };
 
