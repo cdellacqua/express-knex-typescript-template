@@ -8,7 +8,7 @@ export async function signUrl(relativeUrl: string, expiresIn?: number): Promise<
 	if (expiresIn) {
 		url += `${new URL(url).search ? '&' : '?'}hashts=${Math.floor(Date.now() / 1000) + expiresIn}`;
 	}
-	return `${url}${new URL(url).search ? '&' : '?'}hash=${encodeURIComponent(await hash(url.substring(config.http.baseUrl.length)))}`;
+	return `${url}${new URL(url).search ? '&' : '?'}hash=${encodeURIComponent(await hash(url.substring(config.http.baseUrl.length) + config.secret))}`;
 }
 
 export async function verifyUrl(relativeUrl: string): Promise<boolean> {
@@ -18,7 +18,7 @@ export async function verifyUrl(relativeUrl: string): Promise<boolean> {
 	if (!clientHash) {
 		return false;
 	}
-	if (!(await hashCheck(decodeURIComponent(relativeUrl.replace(/(&|\?)hash=[^&]+/, '')), clientHash))) {
+	if (!(await hashCheck(decodeURIComponent(relativeUrl.replace(/(&|\?)hash=[^&]+/, '')) + config.secret, clientHash))) {
 		return false;
 	}
 	if (expiresAt && Math.floor(Date.now() / 1000) > Number(expiresAt)) {
