@@ -11,7 +11,9 @@ export default r;
 // TODO: remove these three examples
 r.get('/hello-api', (_, res) => res.send('hello, World!'));
 r.get('/hello-ssr', (_, res) => res.render('hello-world'));
-r.get('/hello-signed', verifyUrlMiddleware(), (_, res) => res.send('hello. This url is signed!'));
+r.get('/hello-signed', verifyUrlMiddleware(), (req, res) => res.send(`hello. This url is signed! I received the following params: ${
+	Object.entries(req.query).map((pair) => pair.join(': ')).join('\n')
+}`));
 
 r.use('/user', userRoutes);
 

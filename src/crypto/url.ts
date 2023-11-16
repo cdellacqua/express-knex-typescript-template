@@ -18,7 +18,7 @@ export async function verifyUrl(relativeUrl: string): Promise<boolean> {
 	if (!clientHash) {
 		return false;
 	}
-	if (!(await hashCheck(decodeURIComponent(relativeUrl.replace(/(&|\?)hash=[^&]+/, '')) + config.secret, clientHash))) {
+	if (!(await hashCheck(relativeUrl.replace(/(&|\?)hash=[^&]+/, '') + config.secret, clientHash))) {
 		return false;
 	}
 	if (expiresAt && Math.floor(Date.now() / 1000) > Number(expiresAt)) {

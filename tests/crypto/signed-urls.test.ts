@@ -33,4 +33,16 @@ describe('signed urls', () => {
 				done();
 			});
 	});
+	it('correctly handles url param encoding', (done) => {
+		signUrl(`/hello-signed?withSomething=${encodeURIComponent('url!encodèd"/')}`).then((signedUrl2) => {
+			chai.request(serverUrl)
+				.get(`${signedUrl2.substring(serverUrl.length)}`)
+				.end((err, res) => {
+					if (err) done(err);
+					expect(res.status).to.equal(HttpStatus.OK);
+					expect(res.text).to.include('url!encodèd"/');
+					done();
+				});
+		});
+	});
 });
